@@ -2,6 +2,9 @@ import os, sys
 from PeerPack import p, app
 
 if __name__ == "__main__":
-    p.show()
-    p.clearFocus()
-    app.exec_()
+    try:
+        p.show()
+        app.exec_()
+        p.clearFocus()
+    except RuntimeError:
+        pass

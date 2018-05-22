@@ -96,6 +96,7 @@ class Peer(QMainWindow):
         self.setCentralWidget(self.cw)
 
         self.retranslateUi()
+        self.btnEventInit()
         self.infoTabW.setCurrentIndex(0)
 
 
@@ -106,24 +107,76 @@ class Peer(QMainWindow):
         self.mkbtn.setText("MAKE")
         self.infoTabW.setTabText(self.infoTabW.indexOf(self.tab), "tab1")
         self.infoTabW.setTabText(self.infoTabW.indexOf(self.tab2), "tab2")
-        pass
 
+    def btnEventInit(self):
+        self.addbtn.clicked.connect(self.add_torrent)
+        self.delbtn.clicked.connect(self.delete_torrent)
+        self.mkbtn.clicked.connect(self.make_torrent)
 
     def add_torrent(self):
-        pass
+        self.torrentFiles = QFileDialog.getOpenFileNames()
 
     def delete_torrent(self):
-        pass
-
-    def view_torrent(self):
-        pass
+        # selected torrents deletion
+        print("deleteeeeeee")
 
     def make_torrent(self):
-        '''
-        app = QApplication(sys.argv)
-        q = QWidget()
-        fname = QFileDialog.getOpenFileNames(q)
-        print(fname)
-        app.exec_()
-        '''
-        pass
+        dialog = QDialog(self)
+        dialog.setFixedSize(350,500)
+        dialog.setModal(True)
+
+        dialog.setLayout(QHBoxLayout())
+
+        fileNameLabel = QLabel("File Name : ")
+        fileNameLabel.setFont(QFont("Arial", 13, QFont.Bold))
+        fileNameLabel.setFixedSize(75, 30)
+        fileNameLabel.move(15, 10)
+        fileNameLabel.setAlignment(Qt.AlignCenter)
+
+        self.fileNameText = QLineEdit("")
+        self.fileNameText.setFont(QFont("Arial", 13, QFont.Bold))
+        self.fileNameText.setFixedSize(210, 30)
+        self.fileNameText.move(95, 10)
+
+        toolBtn = QToolButton()
+        toolBtn.setFixedSize(30,30)
+        toolBtn.move(305, 10)
+        toolBtn.setText("...")
+
+        sharingFilesLabel = QLabel("Files")
+        sharingFilesLabel.setFont(QFont("Arial", 13, QFont.Bold))
+        sharingFilesLabel.setFixedSize(75,30)
+        sharingFilesLabel.move(15, 50)
+        sharingFilesLabel.setAlignment(Qt.AlignVCenter)
+
+        addBtn = QToolButton()
+        addBtn.setFixedSize(30,30)
+        addBtn.move(275, 50)
+        addBtn.setText("+")
+
+        rmBtn = QToolButton()
+        rmBtn.setFixedSize(30,30)
+        rmBtn.move(305, 50)
+        rmBtn.setText("-")
+
+        toolBtn.clicked.connect(self.setSaveFileName)
+        addBtn.clicked.connect(self.addSharingFiles)
+
+        dialog.layout().addChildWidget(fileNameLabel)
+        dialog.layout().addChildWidget(self.fileNameText)
+        dialog.layout().addChildWidget(toolBtn)
+
+        dialog.layout().addChildWidget(sharingFilesLabel)
+        dialog.layout().addChildWidget(addBtn)
+        dialog.layout().addChildWidget(rmBtn)
+
+        dialog.show()
+        #self.files = QFileDialog.getOpenFileNames()
+
+    def setSaveFileName(self):
+        file = QFileDialog.getSaveFileName()
+        if file is not None and file[0] is not None and file[0] is not "":
+            self.fileNameText.setText(file[0])
+
+    def addSharingFiles(self):
+        dir = QFileDialog.getExistingDirectory()
