@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys
+import sys, os
+import hashlib
 
 class Peer(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.kurrentLIST = []
         self.initGUI()
 
     def closeEvent(self, event):
@@ -41,6 +43,9 @@ class Peer(QMainWindow):
 
         self.categorycb = QComboBox(self.cw)
         self.categorycb.setObjectName("categorycb")
+
+        self.categorycb.addItems(["All", "Complete", "Downloading", "Stopped"])
+
         self.btnl.addWidget(self.categorycb)
         self.vl.addLayout(self.btnl)
 
@@ -114,69 +119,307 @@ class Peer(QMainWindow):
         self.mkbtn.clicked.connect(self.make_torrent)
 
     def add_torrent(self):
-        self.torrentFiles = QFileDialog.getOpenFileNames()
+        self.addDialog = QDialog(self)
+        self.addDialog.setFixedSize(350, 370)
+        self.addDialog.setModal(True)
+
+        self.addDialog.setLayout(QHBoxLayout())
+
+        fileNameLabel = QLabel("File Name : ")
+        fileNameLabel.setFont(QFont("Arial", 13, QFont.Bold))
+        fileNameLabel.setFixedSize(85, 30)
+        fileNameLabel.move(15, 10)
+        fileNameLabel.setAlignment(Qt.AlignCenter | Qt.AlignLeft)
+
+        self.addFileNameText = QLineEdit("")
+        self.addFileNameText.setFont(QFont("Arial", 13, QFont.Bold))
+        self.addFileNameText.setFixedSize(200, 30)
+        self.addFileNameText.move(105, 10)
+
+        toolBtn = QToolButton()
+        toolBtn.setFixedSize(30, 30)
+        toolBtn.move(305, 10)
+        toolBtn.setText("...")
+
+        sharingDirLabel = QLabel("Sharing Dir : ")
+        sharingDirLabel.setFont(QFont("Arial", 13, QFont.Bold))
+        sharingDirLabel.setFixedSize(85, 30)
+        sharingDirLabel.move(15, 50)
+        sharingDirLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+
+        self.savingDirText = QLineEdit("")
+        self.savingDirText.setFont(QFont("Arial", 13, QFont.Bold))
+        self.savingDirText.setFixedSize(200, 30)
+        self.savingDirText.move(105, 50)
+
+        toolBtn2 = QToolButton()
+        toolBtn2.setFixedSize(30, 30)
+        toolBtn2.move(305, 50)
+        toolBtn2.setText("...")
+
+        trackerListLabel = QLabel("Tracker List")
+        trackerListLabel.setFont(QFont("Arial", 13, QFont.Bold))
+        trackerListLabel.setFixedSize(85, 30)
+        trackerListLabel.move(15, 90)
+        trackerListLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+
+        self.addTrackerListText = QTextEdit()
+        self.addTrackerListText.setFont(QFont("Arial", 13, QFont.Bold))
+        self.addTrackerListText.setFixedSize(320, 200)
+        self.addTrackerListText.move(15, 120)
+
+        okBtn = QPushButton("Make")
+        okBtn.setFont(QFont("Arial", 12, QFont.Bold))
+        okBtn.setFixedSize(70, 35)
+        okBtn.move(180, 330)
+
+        cancelBtn = QPushButton("Cancel")
+        cancelBtn.setFont(QFont("Arial", 12, QFont.Bold))
+        cancelBtn.setFixedSize(70, 35)
+        cancelBtn.move(265, 330)
+
+        toolBtn.clicked.connect(self.setAddFileName)
+        toolBtn2.clicked.connect(self.setSavingDir)
+        okBtn.clicked.connect(self.add_torrent_ok)
+        cancelBtn.clicked.connect(self.add_torrent_cancel)
+
+        self.addDialog.layout().addChildWidget(fileNameLabel)
+        self.addDialog.layout().addChildWidget(self.addFileNameText)
+        self.addDialog.layout().addChildWidget(toolBtn)
+
+        self.addDialog.layout().addChildWidget(sharingDirLabel)
+        self.addDialog.layout().addChildWidget(self.savingDirText)
+        self.addDialog.layout().addChildWidget(toolBtn2)
+
+        self.addDialog.layout().addChildWidget(trackerListLabel)
+        self.addDialog.layout().addChildWidget(self.addTrackerListText)
+
+        self.addDialog.layout().addChildWidget(okBtn)
+        self.addDialog.layout().addChildWidget(cancelBtn)
+
+        self.addDialog.show()
+
+    def add_torrent_job(self, torrentFile, saveDir, trackerList):
+        self.kurrentLIST.append([torrentFile, saveDir, trackerList])
+        # update list
+        model = QStandardItemModel(len(self.kurrentLIST), 5, self)
+
+        model.setHorizontalHeaderItem(0, QStandardItem("Name"))
+        model.setHorizontalHeaderItem(1, QStandardItem("Location"))
+        model.setHorizontalHeaderItem(2, QStandardItem("Status"))
+        model.setHorizontalHeaderItem(3, QStandardItem("Speed"))
+        model.setHorizontalHeaderItem(4, QStandardItem("Seeder"))
+
+        for i in range(len(self.kurrentLIST)):
+            model.setItem(i, 0, QStandardItem(os.path.basename(self.kurrentLIST[i][0])))
+            model.setItem(i, 1, QStandardItem(self.kurrentLIST[i][1]))
+
+        self.torrentlist.setModel(model)
+
+    def setAddFileName(self):
+        torrentFiles = QFileDialog.getOpenFileName(self, "", "", "KUrrent Files (*.kurrent)")
+        if torrentFiles is not None and torrentFiles[0] is not None and torrentFiles[0] is not "":
+            self.addFileNameText.setText(torrentFiles[0])
+
+        self.addTrackerListText.setText("")
+
+        f = open(torrentFiles[0], 'r')
+
+        content = f.read().splitlines()
+
+        trackernum = -1
+        filenum = -1
+
+        for i in content:
+            if i.startswith("trackers : "):
+                trackernum = int(i[10:])
+                filenum = -1
+            elif i.startswith("files : "):
+                filenum = int(i[8:])
+                trackernum = -1
+            elif filenum == -1 and trackernum != -1:
+                self.addTrackerListText.append(i)
+            else:
+                pass
+
+        f.close()
+
+
+    def setSavingDir(self):
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.DirectoryOnly)
+        dialog.exec_()
+        dir = dialog.selectedFiles()
+        if dir is not None and dir[0] is not None and dir[0] is not "":
+            self.savingDirText.setText(dir[0])
+
+    def add_torrent_ok(self):
+        self.addDialog.destroy()
+
+    def add_torrent_cancel(self):
+        self.addDialog.destroy()
 
     def delete_torrent(self):
         # selected torrents deletion
         print("deleteeeeeee")
 
     def make_torrent(self):
-        dialog = QDialog(self)
-        dialog.setFixedSize(350,500)
-        dialog.setModal(True)
+        self.makeDialog = QDialog(self)
+        self.makeDialog.setFixedSize(350,370)
+        self.makeDialog.setModal(True)
 
-        dialog.setLayout(QHBoxLayout())
+        self.makeDialog.setLayout(QHBoxLayout())
 
         fileNameLabel = QLabel("File Name : ")
         fileNameLabel.setFont(QFont("Arial", 13, QFont.Bold))
-        fileNameLabel.setFixedSize(75, 30)
+        fileNameLabel.setFixedSize(85, 30)
         fileNameLabel.move(15, 10)
-        fileNameLabel.setAlignment(Qt.AlignCenter)
+        fileNameLabel.setAlignment(Qt.AlignCenter | Qt.AlignLeft)
 
         self.fileNameText = QLineEdit("")
         self.fileNameText.setFont(QFont("Arial", 13, QFont.Bold))
-        self.fileNameText.setFixedSize(210, 30)
-        self.fileNameText.move(95, 10)
+        self.fileNameText.setFixedSize(200, 30)
+        self.fileNameText.move(105, 10)
 
         toolBtn = QToolButton()
         toolBtn.setFixedSize(30,30)
         toolBtn.move(305, 10)
         toolBtn.setText("...")
 
-        sharingFilesLabel = QLabel("Files")
-        sharingFilesLabel.setFont(QFont("Arial", 13, QFont.Bold))
-        sharingFilesLabel.setFixedSize(75,30)
-        sharingFilesLabel.move(15, 50)
-        sharingFilesLabel.setAlignment(Qt.AlignVCenter)
+        sharingDirLabel = QLabel("Sharing Dir : ")
+        sharingDirLabel.setFont(QFont("Arial", 13, QFont.Bold))
+        sharingDirLabel.setFixedSize(85, 30)
+        sharingDirLabel.move(15, 50)
+        sharingDirLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
 
-        addBtn = QToolButton()
-        addBtn.setFixedSize(30,30)
-        addBtn.move(275, 50)
-        addBtn.setText("+")
+        self.sharingDirText = QLineEdit("")
+        self.sharingDirText.setFont(QFont("Arial", 13, QFont.Bold))
+        self.sharingDirText.setFixedSize(200, 30)
+        self.sharingDirText.move(105, 50)
 
-        rmBtn = QToolButton()
-        rmBtn.setFixedSize(30,30)
-        rmBtn.move(305, 50)
-        rmBtn.setText("-")
+        toolBtn2 = QToolButton()
+        toolBtn2.setFixedSize(30,30)
+        toolBtn2.move(305, 50)
+        toolBtn2.setText("...")
+
+        trackerListLabel = QLabel("Tracker List")
+        trackerListLabel.setFont(QFont("Arial", 13, QFont.Bold))
+        trackerListLabel.setFixedSize(85,30)
+        trackerListLabel.move(15, 90)
+        trackerListLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+
+        self.trackerListText = QTextEdit()
+        self.trackerListText.setFont(QFont("Arial", 13, QFont.Bold))
+        self.trackerListText.setFixedSize(320, 200)
+        self.trackerListText.move(15, 120)
+
+        okBtn = QPushButton("Make")
+        okBtn.setFont(QFont("Arial", 12, QFont.Bold))
+        okBtn.setFixedSize(70, 35)
+        okBtn.move(180, 330)
+
+        cancelBtn = QPushButton("Cancel")
+        cancelBtn.setFont(QFont("Arial", 12, QFont.Bold))
+        cancelBtn.setFixedSize(70, 35)
+        cancelBtn.move(265, 330)
 
         toolBtn.clicked.connect(self.setSaveFileName)
-        addBtn.clicked.connect(self.addSharingFiles)
+        toolBtn2.clicked.connect(self.setSharingDir)
+        okBtn.clicked.connect(self.make_torrent_job)
+        cancelBtn.clicked.connect(self.make_torrent_cancel)
 
-        dialog.layout().addChildWidget(fileNameLabel)
-        dialog.layout().addChildWidget(self.fileNameText)
-        dialog.layout().addChildWidget(toolBtn)
+        self.makeDialog.layout().addChildWidget(fileNameLabel)
+        self.makeDialog.layout().addChildWidget(self.fileNameText)
+        self.makeDialog.layout().addChildWidget(toolBtn)
 
-        dialog.layout().addChildWidget(sharingFilesLabel)
-        dialog.layout().addChildWidget(addBtn)
-        dialog.layout().addChildWidget(rmBtn)
+        self.makeDialog.layout().addChildWidget(sharingDirLabel)
+        self.makeDialog.layout().addChildWidget(self.sharingDirText)
+        self.makeDialog.layout().addChildWidget(toolBtn2)
 
-        dialog.show()
-        #self.files = QFileDialog.getOpenFileNames()
+        self.makeDialog.layout().addChildWidget(trackerListLabel)
+        self.makeDialog.layout().addChildWidget(self.trackerListText)
+
+        self.makeDialog.layout().addChildWidget(okBtn)
+        self.makeDialog.layout().addChildWidget(cancelBtn)
+
+        self.makeDialog.show()
 
     def setSaveFileName(self):
-        file = QFileDialog.getSaveFileName()
+        file = QFileDialog.getSaveFileName(self.makeDialog, "", "", "KUrrent Files (*.kurrent)")
         if file is not None and file[0] is not None and file[0] is not "":
             self.fileNameText.setText(file[0])
 
-    def addSharingFiles(self):
-        dir = QFileDialog.getExistingDirectory()
+    def setSharingDir(self):
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.DirectoryOnly)
+        dialog.exec_()
+        dir = dialog.selectedFiles()
+        if dir is not None and dir[0] is not None and dir[0] is not "":
+            self.sharingDirText.setText(dir[0])
+
+    def make_torrent_job(self):
+        # make torrent file
+        fn = self.fileNameText.text()
+        sd = self.sharingDirText.text()
+        tl = self.trackerListText.toPlainText()
+        f = open(fn, "w")
+        tll = tl.splitlines()
+
+        tracker = []
+        for i in tll:
+            if len(i.strip()) > 0:
+                tracker.append(i.strip())
+
+        f.write("trackers : " + str(len(tracker)) + "\n")
+        for i in tracker:
+            f.write(i.strip() + "\n")
+
+        flist = self.getFileListRecur(sd + os.path.sep, "")
+
+        f.write("files : " + str(len(flist)) + "\n")
+        for i in flist:
+            sha = hashlib.sha256()
+            try:
+                file = open(sd+i,"rb")
+            except IOError:
+                pass
+            while True:
+                buf = file.read(8192)
+                if not buf:
+                    break
+                sha.update(buf)
+            file.close()
+            f.write(i + "\n")
+            f.write(str(os.path.getsize(sd+i)) + "\n")
+            f.write(sha.hexdigest() + "\n")
+
+        f.close()
+        # add to torrent list
+        self.add_torrent_job(fn, sd, tracker)
+
+        # destroy
+        self.makeDialog.destroy()
+
+    def getFileListRecur(self, abs_path, file):
+        if os.path.isfile(abs_path+file):
+            if os.path.basename(abs_path+file).startswith("."):
+                return None
+            return file
+        elif os.path.isdir(abs_path+file):
+            child = os.listdir(abs_path+file)
+            ret = []
+            for i in child:
+                f = self.getFileListRecur(abs_path, file+os.path.sep+i)
+                if f is None:
+                    continue
+                if type(f) is str:
+                    ret.append(f)
+                elif type(f) is list:
+                    for j in f:
+                        ret.append(j)
+            return ret
+
+
+    def make_torrent_cancel(self):
+        self.makeDialog.destroy()
+
