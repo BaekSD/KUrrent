@@ -3,12 +3,14 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys, os
 import hashlib
+from PeerPack import Connect2Tracker
 
 class Peer(QMainWindow):
-    def __init__(self):
+    def __init__(self, c2t):
         super().__init__()
         self.kurrentLIST = []
         self.initGUI()
+        self.c2t = c2t
 
     def closeEvent(self, event):
         self.deleteLater()
@@ -168,7 +170,7 @@ class Peer(QMainWindow):
         self.addTrackerListText.setFixedSize(320, 200)
         self.addTrackerListText.move(15, 120)
 
-        okBtn = QPushButton("Make")
+        okBtn = QPushButton("Add")
         okBtn.setFont(QFont("Arial", 12, QFont.Bold))
         okBtn.setFixedSize(70, 35)
         okBtn.move(180, 330)
@@ -244,7 +246,6 @@ class Peer(QMainWindow):
 
         f.close()
 
-
     def setSavingDir(self):
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.DirectoryOnly)
@@ -254,7 +255,10 @@ class Peer(QMainWindow):
             self.savingDirText.setText(dir[0])
 
     def add_torrent_ok(self):
-        self.addDialog.destroy()
+        if os.path.isfile(self.addFileNameText.text()):
+            self.addDialog.destroy()
+        else:
+            QMessageBox.information(self.addDialog, "File not found", "File not found", QMessageBox.Ok)
 
     def add_torrent_cancel(self):
         self.addDialog.destroy()
