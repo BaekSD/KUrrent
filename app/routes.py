@@ -18,8 +18,5 @@ def about():
 
 @app.route('/peerList', methods=['GET'])
 def send_peer_list():
-
-    data = [{"name": "Ford", "models": ["Fiesta", "Focus", "Mustang"]}, {"name": "BMW", "models": ["320", "X3", "X5"]},
-     {"name": "Fiat", "models": ["500", "Panda"]}]
-
+    data = {'ip':'1', 'port':'5000', 'file_hash':'aaa'}
     return jsonify(data)
