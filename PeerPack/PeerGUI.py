@@ -3,15 +3,14 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys, os
 import hashlib
-from PeerPack import PeerCore
 from PeerPack import Connect2Tracker
 
-class PeerGUI(QMainWindow):
+class Peer(QMainWindow):
     def __init__(self, c2t):
         super().__init__()
-        self.c2t = c2t
-        self.core = PeerCore.PeerCore()
+        self.kurrentLIST = []
         self.initGUI()
+        self.c2t = c2t
 
     def closeEvent(self, event):
         self.deleteLater()
@@ -203,9 +202,9 @@ class PeerGUI(QMainWindow):
         self.addDialog.show()
 
     def add_torrent_job(self, torrentFile, saveDir, trackerList):
-        self.core.KUrrentLIST.append([torrentFile, saveDir, trackerList])
+        self.kurrentLIST.append([torrentFile, saveDir, trackerList])
         # update list
-        model = QStandardItemModel(len(self.core.KUrrentLIST), 5, self)
+        model = QStandardItemModel(len(self.kurrentLIST), 5, self)
 
         model.setHorizontalHeaderItem(0, QStandardItem("Name"))
         model.setHorizontalHeaderItem(1, QStandardItem("Location"))
@@ -213,9 +212,9 @@ class PeerGUI(QMainWindow):
         model.setHorizontalHeaderItem(3, QStandardItem("Speed"))
         model.setHorizontalHeaderItem(4, QStandardItem("Seeder"))
 
-        for i in range(len(self.core.KUrrentLIST)):
-            model.setItem(i, 0, QStandardItem(os.path.basename(self.core.KUrrentLIST[i][0])))
-            model.setItem(i, 1, QStandardItem(self.core.KUrrentLIST[i][1]))
+        for i in range(len(self.kurrentLIST)):
+            model.setItem(i, 0, QStandardItem(os.path.basename(self.kurrentLIST[i][0])))
+            model.setItem(i, 1, QStandardItem(self.kurrentLIST[i][1]))
 
         self.torrentlist.setModel(model)
 
@@ -367,14 +366,63 @@ class PeerGUI(QMainWindow):
         fn = self.fileNameText.text()
         sd = self.sharingDirText.text()
         tl = self.trackerListText.toPlainText()
+        f = open(fn, "w")
+        tll = tl.splitlines()
 
-        print(fn)
-        print(sd)
-        print(tl)
-        self.core.make_torrent(fn, sd, tl)
+        tracker = []
+        for i in tll:
+            if len(i.strip()) > 0:
+                tracker.append(i.strip())
+
+        f.write("trackers : " + str(len(tracker)) + "\n")
+        for i in tracker:
+            f.write(i.strip() + "\n")
+
+        flist = self.getFileListRecur(sd + os.path.sep, "")
+
+        f.write("files : " + str(len(flist)) + "\n")
+        for i in flist:
+            sha = hashlib.sha256()
+            try:
+                file = open(sd+i,"rb")
+            except IOError:
+                pass
+            while True:
+                buf = file.read(8192)
+                if not buf:
+                    break
+                sha.update(buf)
+            file.close()
+            f.write(i + "\n")
+            f.write(str(os.path.getsize(sd+i)) + "\n")
+            f.write(sha.hexdigest() + "\n")
+
+        f.close()
+        # add to torrent list
+        self.add_torrent_job(fn, sd, tracker)
 
         # destroy
         self.makeDialog.destroy()
+
+    def getFileListRecur(self, abs_path, file):
+        if os.path.isfile(abs_path+file):
+            if os.path.basename(abs_path+file).startswith("."):
+                return None
+            return file
+        elif os.path.isdir(abs_path+file):
+            child = os.listdir(abs_path+file)
+            ret = []
+            for i in child:
+                f = self.getFileListRecur(abs_path, file+os.path.sep+i)
+                if f is None:
+                    continue
+                if type(f) is str:
+                    ret.append(f)
+                elif type(f) is list:
+                    for j in f:
+                        ret.append(j)
+            return ret
+
 
     def make_torrent_cancel(self):
         self.makeDialog.destroy()
