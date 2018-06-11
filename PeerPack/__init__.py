@@ -1,4 +1,5 @@
-from PeerPack import Peer,Connect2Tracker
+from PeerPack.Connection import Connect2Tracker
+from PeerPack import Peer
 from PyQt5.QtWidgets import *
 import sys
 

@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys, os
+import os
 import hashlib
-from PeerPack import Connect2Tracker
+
 
 class Peer(QMainWindow):
     def __init__(self, c2t):
