@@ -1,8 +1,10 @@
+from PeerPack import PeerGUI
+from PeerPack import PeerCore as Core
 from PeerPack.Connection import Connect2Tracker
-from PeerPack import Peer
 from PyQt5.QtWidgets import *
 import sys
 
 c2t = Connect2Tracker.Connect2Tracker()
 app = QApplication(sys.argv)
-p = Peer.Peer(c2t)
+core = Core.PeerCore(c2t)
+p = PeerGUI.Peer(core)

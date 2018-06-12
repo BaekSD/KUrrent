@@ -1,16 +1,16 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import os
+import sys, os
 import hashlib
-
+from PeerPack.Connection import Connect2Tracker
 
 class Peer(QMainWindow):
-    def __init__(self, c2t):
+    def __init__(self, core):
         super().__init__()
         self.kurrentLIST = []
         self.initGUI()
-        self.c2t = c2t
+        self.core = core
 
     def closeEvent(self, event):
         self.deleteLater()
@@ -256,6 +256,9 @@ class Peer(QMainWindow):
 
     def add_torrent_ok(self):
         if os.path.isfile(self.addFileNameText.text()):
+            tracker_list = self.addTrackerListText.toPlainText()#.split('\n')
+            file = open(self.addFileNameText.text(), 'rt')
+            self.core.add_download_list(tracker_list, file)
             self.addDialog.destroy()
         else:
             QMessageBox.information(self.addDialog, "File not found", "File not found", QMessageBox.Ok)
@@ -366,16 +369,19 @@ class Peer(QMainWindow):
         fn = self.fileNameText.text()
         sd = self.sharingDirText.text()
         tl = self.trackerListText.toPlainText()
+        tracker_list = self.core.make_torrent(fn, sd, tl)
+
+        '''
         f = open(fn, "w")
         tll = tl.splitlines()
 
-        tracker = []
+        tracker_list = []
         for i in tll:
             if len(i.strip()) > 0:
-                tracker.append(i.strip())
+                tracker_list.append(i.strip())
 
-        f.write("trackers : " + str(len(tracker)) + "\n")
-        for i in tracker:
+        f.write("trackers : " + str(len(tracker_list)) + "\n")
+        for i in tracker_list:
             f.write(i.strip() + "\n")
 
         flist = self.getFileListRecur(sd + os.path.sep, "")
@@ -398,9 +404,11 @@ class Peer(QMainWindow):
             f.write(sha.hexdigest() + "\n")
 
         f.close()
+        '''
         # add to torrent list
-        self.add_torrent_job(fn, sd, tracker)
-
+        self.add_torrent_job(fn, sd, tracker_list)
+        f = open(fn, "rt")
+        self.core.add_seeder(tracker_list, f)
         # destroy
         self.makeDialog.destroy()
 
