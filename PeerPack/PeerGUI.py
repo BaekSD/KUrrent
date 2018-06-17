@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys, os
+import sys, os, time
 import hashlib
 from PeerPack.Connection import Connect2Tracker
 
@@ -201,24 +201,30 @@ class PeerGUI(QMainWindow):
 
     def update_torrent_list(self):
         # update list
-        model = QStandardItemModel(len(self.kurrentLIST), 5, self)
+        while True:
+            try:
+                model = QStandardItemModel(len(self.core.kurrentLIST), 5, self)
 
-        model.setHorizontalHeaderItem(0, QStandardItem("Hash"))
-        model.setHorizontalHeaderItem(1, QStandardItem("Name"))
-        model.setHorizontalHeaderItem(2, QStandardItem("Location"))
-        model.setHorizontalHeaderItem(3, QStandardItem("Status"))
-        model.setHorizontalHeaderItem(4, QStandardItem("Seeder"))
+                model.setHorizontalHeaderItem(0, QStandardItem("Hash"))
+                model.setHorizontalHeaderItem(1, QStandardItem("Name"))
+                model.setHorizontalHeaderItem(2, QStandardItem("Location"))
+                model.setHorizontalHeaderItem(3, QStandardItem("Status"))
+                model.setHorizontalHeaderItem(4, QStandardItem("Seeder"))
 
-        count = 0
-        for i in self.core.kurrentLIST.keys():
-            model.setItem(count, 0, QStandardItem(i))
-            model.setItem(count, 1, QStandardItem(os.path.basename(self.core.kurrentLIST[i][0])))
-            model.setItem(count, 2, QStandardItem(self.core.kurrentLIST[i][1]))
-            model.setItem(count, 3, QStandardItem(self.core.get_status(i)))
-            model.setItem(count, 4, QStandardItem(self.core.get_seeder_num(i)))
-            count += 1
+                count = 0
+                for i in self.core.kurrentLIST.keys():
+                    model.setItem(count, 0, QStandardItem(i))
+                    model.setItem(count, 1, QStandardItem(os.path.basename(self.core.kurrentLIST[i][0])))
+                    model.setItem(count, 2, QStandardItem(self.core.kurrentLIST[i][1]))
+                    model.setItem(count, 3, QStandardItem(self.core.get_status(i)))
+                    model.setItem(count, 4, QStandardItem(self.core.get_seeder_num(i)))
+                    count += 1
 
-        self.torrentlist.setModel(model)
+                self.torrentlist.setModel(model)
+
+                time.sleep(1)
+            except:
+                pass
 
     def set_add_file_name(self):
         torrentFiles = QFileDialog.getOpenFileName(self, "", "", "KUrrent Files (*.kurrent)")
@@ -258,9 +264,9 @@ class PeerGUI(QMainWindow):
 
     def add_torrent_ok(self):
         if os.path.isfile(self.addFileNameText.text()):
-            tracker_list = self.addTrackerListText.toPlainText()#.split('\n')
-            self.core.add_download_list(self.addFileNameText.text(), self.savingDirText.text(), tracker_list)
-            self.update_torrent_list()
+            tracker_text = self.addTrackerListText.toPlainText()#.split('\n')
+            self.core.add_torrent(self.addFileNameText.text(), self.savingDirText.text(), tracker_text)
+            #self.core.add_download_list(self.addFileNameText.text(), self.savingDirText.text(), tracker_list)
             self.addDialog.destroy()
         else:
             QMessageBox.information(self.addDialog, "File not found", "File not found", QMessageBox.Ok)
@@ -371,15 +377,8 @@ class PeerGUI(QMainWindow):
         fn = self.fileNameText.text()
         sd = self.sharingDirText.text()
         tl = self.trackerListText.toPlainText()
-        tracker_list = self.core.make_torrent(fn, sd, tl)
-
-        # add to torrent list
-        self.update_torrent_list(fn, sd, tracker_list)
-        f = open(fn, "rt")
-        self.core.add_seeder(tracker_list, f)
-        # destroy
+        self.core.make_torrent(fn, sd, tl)
         self.makeDialog.destroy()
 
     def make_torrent_cancel(self):
         self.makeDialog.destroy()
-        #self.makeDialog.close()

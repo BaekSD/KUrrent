@@ -46,7 +46,10 @@ class PeerCore:
             f.write(str(os.path.getsize(sharingDir + i)) + "\n")
 
         f.close()
-        return tracker_list
+
+        f = open(fName, 'rt')
+        self.add_seeder(tracker_list, f)
+        f.close()
 
     def get_file_list_recur(self, abs_path, file):
         if os.path.isfile(abs_path+file):
@@ -67,19 +70,19 @@ class PeerCore:
                         ret.append(j)
             return ret
 
-    def add_torrent(self, fName, sharingDir, trackerList, new_add = True):
-        if new_add: # completely new adding
-            pass
-        else:       # add after make torrent
-            pass
-
-    def add_download_list(self, file_name, saving_dir, tracker_text):
+    def add_torrent(self, file_name, saving_dir, tracker_text):
         kurrent_file = open(file_name, 'rt')
         file_hash = self.parser.get_file_hash(kurrent_file)
         tracker_list = self.parser.parse_tracker_text(tracker_text)
+        kurrent_file.close()
+
+        self.add_download_list(file_hash, tracker_list)
+
+        self.KUrrentLIST[file_hash] = {'file_name' : file_name, 'saving_dir' : saving_dir, 'tracker' : tracker_list}
+
+    def add_download_list(self, file_hash, tracker_list):
         for tracker in tracker_list:
             self.c2t.add_request(tracker, file_hash)
-        self.KUrrentLIST[file_hash] = {'file_name' : file_name, 'saving_dir' : saving_dir, 'tracker' : tracker_list}
 
     def add_seeder(self, tracker_list, kurrent_file):
         file_hash = self.parser.get_file_hash(kurrent_file)
@@ -87,7 +90,7 @@ class PeerCore:
             self.c2t.add_seeder_request(tracker, file_hash)
 
     def get_status(self, hash):
-        pass
+        return ""
 
     def get_seeder_num(self, hash):
-        pass
+        return ""
