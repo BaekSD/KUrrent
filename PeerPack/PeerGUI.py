@@ -5,10 +5,9 @@ import sys, os
 import hashlib
 from PeerPack.Connection import Connect2Tracker
 
-class Peer(QMainWindow):
+class PeerGUI(QMainWindow):
     def __init__(self, core):
         super().__init__()
-        self.kurrentLIST = []
         self.initGUI()
         self.core = core
 
@@ -106,7 +105,6 @@ class Peer(QMainWindow):
         self.btnEventInit()
         self.infoTabW.setCurrentIndex(0)
 
-
     def retranslateUi(self):
         self.setWindowTitle("KUrrent")
         self.addbtn.setText("ADD")
@@ -180,8 +178,8 @@ class Peer(QMainWindow):
         cancelBtn.setFixedSize(70, 35)
         cancelBtn.move(265, 330)
 
-        toolBtn.clicked.connect(self.setAddFileName)
-        toolBtn2.clicked.connect(self.setSavingDir)
+        toolBtn.clicked.connect(self.set_add_file_name)
+        toolBtn2.clicked.connect(self.set_saving_dir)
         okBtn.clicked.connect(self.add_torrent_ok)
         cancelBtn.clicked.connect(self.add_torrent_cancel)
 
@@ -201,24 +199,28 @@ class Peer(QMainWindow):
 
         self.addDialog.show()
 
-    def add_torrent_job(self, torrentFile, saveDir, trackerList):
-        self.kurrentLIST.append([torrentFile, saveDir, trackerList])
+    def update_torrent_list(self):
         # update list
         model = QStandardItemModel(len(self.kurrentLIST), 5, self)
 
-        model.setHorizontalHeaderItem(0, QStandardItem("Name"))
-        model.setHorizontalHeaderItem(1, QStandardItem("Location"))
-        model.setHorizontalHeaderItem(2, QStandardItem("Status"))
-        model.setHorizontalHeaderItem(3, QStandardItem("Speed"))
+        model.setHorizontalHeaderItem(0, QStandardItem("Hash"))
+        model.setHorizontalHeaderItem(1, QStandardItem("Name"))
+        model.setHorizontalHeaderItem(2, QStandardItem("Location"))
+        model.setHorizontalHeaderItem(3, QStandardItem("Status"))
         model.setHorizontalHeaderItem(4, QStandardItem("Seeder"))
 
-        for i in range(len(self.kurrentLIST)):
-            model.setItem(i, 0, QStandardItem(os.path.basename(self.kurrentLIST[i][0])))
-            model.setItem(i, 1, QStandardItem(self.kurrentLIST[i][1]))
+        count = 0
+        for i in self.core.kurrentLIST.keys():
+            model.setItem(count, 0, QStandardItem(i))
+            model.setItem(count, 1, QStandardItem(os.path.basename(self.core.kurrentLIST[i][0])))
+            model.setItem(count, 2, QStandardItem(self.core.kurrentLIST[i][1]))
+            model.setItem(count, 3, QStandardItem(self.core.get_status(i)))
+            model.setItem(count, 4, QStandardItem(self.core.get_seeder_num(i)))
+            count += 1
 
         self.torrentlist.setModel(model)
 
-    def setAddFileName(self):
+    def set_add_file_name(self):
         torrentFiles = QFileDialog.getOpenFileName(self, "", "", "KUrrent Files (*.kurrent)")
         if torrentFiles is not None and torrentFiles[0] is not None and torrentFiles[0] is not "":
             self.addFileNameText.setText(torrentFiles[0])
@@ -246,7 +248,7 @@ class Peer(QMainWindow):
 
         f.close()
 
-    def setSavingDir(self):
+    def set_saving_dir(self):
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.DirectoryOnly)
         dialog.exec_()
@@ -257,8 +259,8 @@ class Peer(QMainWindow):
     def add_torrent_ok(self):
         if os.path.isfile(self.addFileNameText.text()):
             tracker_list = self.addTrackerListText.toPlainText()#.split('\n')
-            file = open(self.addFileNameText.text(), 'rt')
-            self.core.add_download_list(tracker_list, file)
+            self.core.add_download_list(self.addFileNameText.text(), self.savingDirText.text(), tracker_list)
+            self.update_torrent_list()
             self.addDialog.destroy()
         else:
             QMessageBox.information(self.addDialog, "File not found", "File not found", QMessageBox.Ok)
@@ -330,9 +332,9 @@ class Peer(QMainWindow):
         cancelBtn.setFixedSize(70, 35)
         cancelBtn.move(265, 330)
 
-        toolBtn.clicked.connect(self.setSaveFileName)
-        toolBtn2.clicked.connect(self.setSharingDir)
-        okBtn.clicked.connect(self.make_torrent_job)
+        toolBtn.clicked.connect(self.set_save_file_name)
+        toolBtn2.clicked.connect(self.set_sharing_dir)
+        okBtn.clicked.connect(self.make_torrent_ok)
         cancelBtn.clicked.connect(self.make_torrent_cancel)
 
         self.makeDialog.layout().addChildWidget(fileNameLabel)
@@ -351,12 +353,12 @@ class Peer(QMainWindow):
 
         self.makeDialog.show()
 
-    def setSaveFileName(self):
+    def set_save_file_name(self):
         file = QFileDialog.getSaveFileName(self.makeDialog, "", "", "KUrrent Files (*.kurrent)")
         if file is not None and file[0] is not None and file[0] is not "":
             self.fileNameText.setText(file[0])
 
-    def setSharingDir(self):
+    def set_sharing_dir(self):
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.DirectoryOnly)
         dialog.exec_()
@@ -364,74 +366,20 @@ class Peer(QMainWindow):
         if dir is not None and dir[0] is not None and dir[0] is not "":
             self.sharingDirText.setText(dir[0])
 
-    def make_torrent_job(self):
+    def make_torrent_ok(self):
         # make torrent file
         fn = self.fileNameText.text()
         sd = self.sharingDirText.text()
         tl = self.trackerListText.toPlainText()
         tracker_list = self.core.make_torrent(fn, sd, tl)
 
-        '''
-        f = open(fn, "w")
-        tll = tl.splitlines()
-
-        tracker_list = []
-        for i in tll:
-            if len(i.strip()) > 0:
-                tracker_list.append(i.strip())
-
-        f.write("trackers : " + str(len(tracker_list)) + "\n")
-        for i in tracker_list:
-            f.write(i.strip() + "\n")
-
-        flist = self.getFileListRecur(sd + os.path.sep, "")
-
-        f.write("files : " + str(len(flist)) + "\n")
-        for i in flist:
-            sha = hashlib.sha256()
-            try:
-                file = open(sd+i,"rb")
-            except IOError:
-                pass
-            while True:
-                buf = file.read(8192)
-                if not buf:
-                    break
-                sha.update(buf)
-            file.close()
-            f.write(i + "\n")
-            f.write(str(os.path.getsize(sd+i)) + "\n")
-            f.write(sha.hexdigest() + "\n")
-
-        f.close()
-        '''
         # add to torrent list
-        self.add_torrent_job(fn, sd, tracker_list)
+        self.update_torrent_list(fn, sd, tracker_list)
         f = open(fn, "rt")
         self.core.add_seeder(tracker_list, f)
         # destroy
         self.makeDialog.destroy()
 
-    def getFileListRecur(self, abs_path, file):
-        if os.path.isfile(abs_path+file):
-            if os.path.basename(abs_path+file).startswith("."):
-                return None
-            return file
-        elif os.path.isdir(abs_path+file):
-            child = os.listdir(abs_path+file)
-            ret = []
-            for i in child:
-                f = self.getFileListRecur(abs_path, file+os.path.sep+i)
-                if f is None:
-                    continue
-                if type(f) is str:
-                    ret.append(f)
-                elif type(f) is list:
-                    for j in f:
-                        ret.append(j)
-            return ret
-
-
     def make_torrent_cancel(self):
         self.makeDialog.destroy()
-
+        #self.makeDialog.close()

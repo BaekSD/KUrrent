@@ -3,9 +3,9 @@ from collections import namedtuple
 
 class Connect2Tracker:
 
-    def __init__(self):
-        self.ip = "127.0.0.1"
-        self.port = "8090"
+    def __init__(self, ip='127.0.0.1', port=8090):
+        self.ip = ip
+        self.port = str(port)
         self.baseURL = self.ip + ":" + self.port
 
     def get_peer_list(self):

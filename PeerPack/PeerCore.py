@@ -3,7 +3,7 @@ from PeerPack import KurrentParser
 
 class PeerCore:
     def __init__(self, c2t):
-        self.KUrrentLIST = []
+        self.KUrrentLIST = {}
         self.c2t = c2t
         self.parser = KurrentParser.Parser()
 
@@ -27,7 +27,7 @@ class PeerCore:
         f = open(fName, "w", encoding='utf-8')
         tll = trackerList.splitlines()
         tracker_list = []
-        flist = self.getFileListRecur(sharingDir + os.path.sep, "")
+        flist = self.get_file_list_recur(sharingDir + os.path.sep, "")
         sha = self.getHash(sharingDir, flist)
         f.write(sha.hexdigest() + "\n")
 
@@ -48,7 +48,7 @@ class PeerCore:
         f.close()
         return tracker_list
 
-    def getFileListRecur(self, abs_path, file):
+    def get_file_list_recur(self, abs_path, file):
         if os.path.isfile(abs_path+file):
             if os.path.basename(abs_path+file).startswith("."):
                 return None
@@ -57,7 +57,7 @@ class PeerCore:
             child = os.listdir(abs_path+file)
             ret = []
             for i in child:
-                f = self.getFileListRecur(abs_path, file+os.path.sep+i)
+                f = self.get_file_list_recur(abs_path, file + os.path.sep + i)
                 if f is None:
                     continue
                 if type(f) is str:
@@ -68,21 +68,26 @@ class PeerCore:
             return ret
 
     def add_torrent(self, fName, sharingDir, trackerList, new_add = True):
-
         if new_add: # completely new adding
             pass
         else:       # add after make torrent
             pass
 
-        pass
-
-    def add_download_list(self, tracker_text, kurrent_file):
+    def add_download_list(self, file_name, saving_dir, tracker_text):
+        kurrent_file = open(file_name, 'rt')
         file_hash = self.parser.get_file_hash(kurrent_file)
         tracker_list = self.parser.parse_tracker_text(tracker_text)
         for tracker in tracker_list:
             self.c2t.add_request(tracker, file_hash)
+        self.KUrrentLIST[file_hash] = {'file_name' : file_name, 'saving_dir' : saving_dir, 'tracker' : tracker_list}
 
     def add_seeder(self, tracker_list, kurrent_file):
         file_hash = self.parser.get_file_hash(kurrent_file)
         for tracker in tracker_list:
             self.c2t.add_seeder_request(tracker, file_hash)
+
+    def get_status(self, hash):
+        pass
+
+    def get_seeder_num(self, hash):
+        pass

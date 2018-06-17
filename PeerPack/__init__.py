@@ -7,4 +7,4 @@ import sys
 c2t = Connect2Tracker.Connect2Tracker()
 app = QApplication(sys.argv)
 core = Core.PeerCore(c2t)
-p = PeerGUI.Peer(core)
+p = PeerGUI.PeerGUI(core)
