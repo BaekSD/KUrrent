@@ -1,9 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys, os, time
-import hashlib
-from PeerPack.Connection import Connect2Tracker
+import os, time
 
 class PeerGUI(QMainWindow):
     def __init__(self, core):
@@ -12,6 +10,8 @@ class PeerGUI(QMainWindow):
         self.core = core
 
     def closeEvent(self, event):
+        super().closeEvent(event)
+        self.core.closeEvent()
         self.deleteLater()
 
     def initGUI(self):
@@ -211,14 +211,11 @@ class PeerGUI(QMainWindow):
                 model.setHorizontalHeaderItem(3, QStandardItem("Status"))
                 model.setHorizontalHeaderItem(4, QStandardItem("Seeder"))
 
-                count = 0
-                for i in self.core.kurrentLIST.keys():
-                    model.setItem(count, 0, QStandardItem(i))
-                    model.setItem(count, 1, QStandardItem(os.path.basename(self.core.kurrentLIST[i][0])))
-                    model.setItem(count, 2, QStandardItem(self.core.kurrentLIST[i][1]))
-                    model.setItem(count, 3, QStandardItem(self.core.get_status(i)))
-                    model.setItem(count, 4, QStandardItem(self.core.get_seeder_num(i)))
-                    count += 1
+                torrent_table = self.core.get_torrent_table()
+
+                for i in range(len(torrent_table)):
+                    for j in range(len(torrent_table[i])):
+                        model.setItem(i, j, QStandardItem(torrent_table[i][j]))
 
                 self.torrentlist.setModel(model)
 

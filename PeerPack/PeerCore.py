@@ -7,6 +7,10 @@ class PeerCore:
         self.c2t = c2t
         self.parser = KurrentParser.Parser()
 
+    def closeEvent(self):
+        print('close')
+        # save status
+
     def getHash(self, dir, fNames):
         sha = hashlib.sha256()
 
@@ -23,12 +27,21 @@ class PeerCore:
             file.close()
         return sha
 
-    def make_torrent(self, fName, sharingDir, trackerList):
-        f = open(fName, "w", encoding='utf-8')
-        tll = trackerList.splitlines()
+    def piece_exist(self, hash, piece_num):
+        return False
+
+    def get_piece(self, hash, piece_num):
+        return None
+
+    def get_todolist(self):
+        return []
+
+    def make_torrent(self, file_name, sharing_dir, tracker_text):
+        f = open(file_name, "w", encoding='utf-8')
+        tll = tracker_text.splitlines()
         tracker_list = []
-        flist = self.get_file_list_recur(sharingDir + os.path.sep, "")
-        sha = self.getHash(sharingDir, flist)
+        flist = self.get_file_list_recur(sharing_dir + os.path.sep, "")
+        sha = self.getHash(sharing_dir, flist)
         f.write(sha.hexdigest() + "\n")
 
         for i in tll:
@@ -43,13 +56,16 @@ class PeerCore:
         f.write("files : " + str(len(flist)) + "\n")
         for i in flist:
             f.write(i + "\n")
-            f.write(str(os.path.getsize(sharingDir + i)) + "\n")
+            f.write(str(os.path.getsize(sharing_dir + i)) + "\n")
 
         f.close()
 
-        f = open(fName, 'rt')
+        f = open(file_name, 'rt')
         self.add_seeder(tracker_list, f)
         f.close()
+
+        self.KUrrentLIST[sha] = {'file_name': file_name, 'saving_dir': sharing_dir,
+                                       'tracker': tracker_list, 'status': 'complete'}
 
     def get_file_list_recur(self, abs_path, file):
         if os.path.isfile(abs_path+file):
@@ -78,7 +94,8 @@ class PeerCore:
 
         self.add_download_list(file_hash, tracker_list)
 
-        self.KUrrentLIST[file_hash] = {'file_name' : file_name, 'saving_dir' : saving_dir, 'tracker' : tracker_list}
+        self.KUrrentLIST[file_hash] = {'file_name' : file_name, 'saving_dir' : saving_dir,
+                                       'tracker' : tracker_list, 'status' : 'downloading'}
 
     def add_download_list(self, file_hash, tracker_list):
         for tracker in tracker_list:
@@ -89,8 +106,15 @@ class PeerCore:
         for tracker in tracker_list:
             self.c2t.add_seeder_request(tracker, file_hash)
 
-    def get_status(self, hash):
-        return ""
-
     def get_seeder_num(self, hash):
         return ""
+
+    def get_torrent_table(self):
+        torrent_table = []
+
+        for i in self.KUrrentLIST.keys():
+            t = [i, self.KUrrentLIST[i]['file_name'], self.KUrrentLIST[i]['saving_dir'],
+                 self.KUrrentLIST[i]['status'], self.get_seeder_num(i)]
+            torrent_table.append(t)
+
+        return torrent_table
