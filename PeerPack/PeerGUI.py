@@ -203,13 +203,12 @@ class PeerGUI(QMainWindow):
         # update list
         while True:
             try:
-                model = QStandardItemModel(len(self.core.kurrentLIST), 5, self)
+                model = QStandardItemModel(len(self.core.kurrentLIST), 4, self)
 
                 model.setHorizontalHeaderItem(0, QStandardItem("Hash"))
-                model.setHorizontalHeaderItem(1, QStandardItem("Name"))
-                model.setHorizontalHeaderItem(2, QStandardItem("Location"))
-                model.setHorizontalHeaderItem(3, QStandardItem("Status"))
-                model.setHorizontalHeaderItem(4, QStandardItem("Seeder"))
+                model.setHorizontalHeaderItem(1, QStandardItem("Location"))
+                model.setHorizontalHeaderItem(2, QStandardItem("Status"))
+                model.setHorizontalHeaderItem(3, QStandardItem("Seeder"))
 
                 torrent_table = self.core.get_torrent_table()
 

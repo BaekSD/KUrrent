@@ -9,24 +9,26 @@ class PeerSocket:
         self.sock_th = threading.Thread(target=self.run_a_sock)
         self.sock_th.daemon = True
         self.sock_th.start()
-        self.comm_th = threading.Thread(target=self.run_communicate)
+        self.comm_th = threading.Thread(target=self.run_request)
         self.comm_th.daemon = True
         self.comm_th.start()
 
-    def request_have(self, ip, port, hash, piece_num):
+    def request_have(self, ip, port, hash, file_name, piece_num):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((ip, port))
             s.send("have".encode())
             s.send(hash.encode())
+            s.send(file_name.endcode())
             s.send(piece_num.encode())
             result = s.recv(1024).decode()
             return bool(result)
 
-    def request_piece(self, ip, port, hash, piece_num):
+    def request_piece(self, ip, port, hash, file_name, piece_num):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((ip, port))
             s.send("piece".encode())
             s.send(hash.encode())
+            s.send(file_name.endcode())
             s.send(piece_num.encode())
             piece = s.recv(1024)
             return piece
@@ -43,17 +45,19 @@ class PeerSocket:
 
     def response_have(self, conn):
         hash = conn.recv(1024).decode()
+        file_name = conn.recv(1024).decode()
         piece_num = conn.recv(1024).decode()
 
-        result = self.core.piece_exist(hash, piece_num)
+        result = self.core.piece_exist(hash, file_name, piece_num)
         conn.send(str(result).encode())
         conn.close()
 
     def response_piece(self, conn):
         hash = conn.recv(1024).decode()
+        file_name = conn.recv(1024).decode()
         piece_num = conn.recv(1024).decode()
 
-        piece = self.core.get_piece(hash, piece_num)
+        piece = self.core.get_piece(hash, file_name, piece_num)
         conn.send(piece)
         conn.close()
 
@@ -84,7 +88,7 @@ class PeerSocket:
                 else:
                     conn.close()
 
-    def run_communicate(self):
+    def run_request(self):
         while True:
             todo = self.core.get_todolist()
             for i in todo:

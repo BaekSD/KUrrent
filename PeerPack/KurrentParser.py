@@ -27,3 +27,17 @@ class Parser:
     def parse_tracker_text(self, tracker_text):
         tracker_list = tracker_text.split('\n')
         return tracker_list
+
+    def get_file_list(self, kurrent_file):
+        file_list = {}
+        file_info = self.get_file_info(kurrent_file)
+        for i in range(int(self.get_tracker_size(kurrent_file))+2, len(file_info), 2):
+            file_list[file_info[i]] = int(file_list[file_info[i+1]])
+        return file_list
+
+    def get_total_size(self, kurrent_file):
+        file_list = self.get_file_list(kurrent_file)
+        size = 0
+        for i in file_list.values():
+            size += i
+        return size
