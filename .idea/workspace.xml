@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c0c50eed-a2c5-4e58-8921-970ae8816550" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/KurrentParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/KurrentParser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/Model/PeerSocket.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/Model/PeerSocket.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PeerPack/PeerCore.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/PeerCore.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/PeerGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/PeerGUI.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,6 +14,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/KUrrent$main.coverage" NAME="main Coverage Results" MODIFIED="1529231938802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PeerPack" />
+    <SUITE FILE_PATH="coverage/KUrrent$PeerSocket.coverage" NAME="PeerSocket Coverage Results" MODIFIED="1529464096739" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PeerPack/Model" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -53,20 +51,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.kurrent" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PeerPack/test.kurrent">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="2" lean-forward="true" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PeerCore.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PeerCore.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="494">
-              <caret line="62" column="52" lean-forward="true" selection-start-line="62" selection-start-column="52" selection-end-line="62" selection-end-column="52" />
+            <state relative-caret-position="505">
+              <caret line="84" column="26" selection-start-line="84" selection-start-column="26" selection-end-line="84" selection-end-column="26" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -74,11 +63,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PeerSocket.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PeerSocket.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PeerPack/Model/PeerSocket.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="626">
-              <caret line="97" lean-forward="true" selection-start-line="97" selection-end-line="97" />
+            <state relative-caret-position="-349">
+              <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -126,9 +115,9 @@
         <option value="$PROJECT_DIR$/PeerPack/main.py" />
         <option value="$PROJECT_DIR$/PeerPack/__init__.py" />
         <option value="$PROJECT_DIR$/PeerPack/PeerGUI.py" />
-        <option value="$PROJECT_DIR$/PeerPack/PeerCore.py" />
         <option value="$PROJECT_DIR$/PeerPack/KurrentParser.py" />
         <option value="$PROJECT_DIR$/PeerPack/Model/PeerSocket.py" />
+        <option value="$PROJECT_DIR$/PeerPack/PeerCore.py" />
       </list>
     </option>
   </component>
@@ -217,7 +206,26 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.PeerSocket">
+    <configuration name="PeerSocket" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="KUrrent" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PeerPack/Model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PeerPack/Model/PeerSocket.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="KUrrent" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -237,8 +245,13 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <list>
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.PeerSocket" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.PeerSocket" />
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
@@ -275,7 +288,14 @@
       <option name="project" value="LOCAL" />
       <updated>1529407098259</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="muer ggaji hat the la?">
+      <created>1529459510157</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1529459510157</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -286,7 +306,7 @@
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49930555" weight="0.3298292" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49930555" weight="0.24115334" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
@@ -314,7 +334,8 @@
     <MESSAGE value="minor updates" />
     <MESSAGE value="peer gui &amp; core refactoring" />
     <MESSAGE value="PeerSocket prototype" />
-    <option name="LAST_COMMIT_MESSAGE" value="PeerSocket prototype" />
+    <MESSAGE value="muer ggaji hat the la?" />
+    <option name="LAST_COMMIT_MESSAGE" value="muer ggaji hat the la?" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/PeerPack/__init__.py">
@@ -503,29 +524,12 @@
     <entry file="file://$PROJECT_DIR$/TrackerPack/app/routes.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/test.kurrent">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="2" lean-forward="true" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/PeerGUI.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="366">
           <caret line="209" column="73" lean-forward="true" selection-start-line="209" selection-start-column="73" selection-end-line="209" selection-end-column="73" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="62" column="52" lean-forward="true" selection-start-line="62" selection-start-column="52" selection-end-line="62" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -537,10 +541,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/Model/test.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/test.kurrent">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="64" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/python_stubs/-316311265/_socket.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="331">
+          <caret line="776" column="3" selection-start-line="776" selection-start-column="3" selection-end-line="776" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/Model/PeerSocket.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="626">
-          <caret line="97" lean-forward="true" selection-start-line="97" selection-end-line="97" />
+        <state relative-caret-position="-349">
+          <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="505">
+          <caret line="84" column="26" selection-start-line="84" selection-start-column="26" selection-end-line="84" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

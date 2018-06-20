@@ -61,7 +61,30 @@ class PeerCore:
         return self.KUrrentLIST[hash]['files'][file_name]['hash_table'][piece_num]
 
     def get_piece(self, hash, file_name, piece_num):
-        return None
+        if hash not in self.KUrrentLIST.keys():
+            return False
+        if file_name not in self.KUrrentLIST[hash]['files'].keys():
+            return False
+        if piece_num >= len(self.KUrrentLIST[hash]['files'][file_name]['hash_table']):
+            return False
+        if self.KUrrentLIST[hash]['files'][file_name]['hash_table'][piece_num]:
+            # find, read and return the piece
+            if self.KUrrentLIST[hash]['status'] == 'complete':
+                # complete file so just read, get and return the piece
+                f = open(self.KUrrentLIST[hash]['dir']+'/'+file_name, 'rb')
+                f.read(piece_num*1024)
+                ret = f.read(1024)
+                f.close()
+                return ret
+            else:
+                # downloading status. so just read the temperature file 'file_name-piece_num' and return that
+                full_file_name = self.KUrrentLIST[hash]['dir'] + '/' + file_name + "-" + str(piece_num)
+                f = open(full_file_name, 'rb')
+                ret = f.read()
+                f.close()
+                return ret
+        else:
+            return False
 
     def get_todolist(self):
         return []
