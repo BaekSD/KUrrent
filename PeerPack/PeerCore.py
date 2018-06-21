@@ -2,34 +2,11 @@ import os, hashlib
 from PeerPack import KurrentParser
 
 class PeerCore:
-    def __init__(self, c2t):
+    def __init__(self, server):
         self.KUrrentLIST = {}
-        '''
-        KUrrentLIST 
-            {
-                hash:   {
-                            status: "downloading",
-                            dir: "~/download",
-                            size: 4162382
-                            files:  {
-                                        file1:  {
-                                                    hash_table: [],
-                                                    size : 1024
-                                                },
-                                        file2:  {
-                                                    hash_table: [],
-                                                    size: 47192
-                                                },
-                                        file3:  {
-                                                    hash_table: [],
-                                                    size: 9043223
-                                                }
-                                    } 
-                        }
-            }
-        '''
-        self.c2t = c2t
+        self.server = server
         self.parser = KurrentParser.Parser()
+        self.server.start()
 
     def closeEvent(self):
         print('close')
@@ -148,17 +125,6 @@ class PeerCore:
             for j in range(int((int(file_list[i])+1023)/1024)):
                 self.KUrrentLIST[file_hash]['files'][i]['hash_table'].append(False)
 
-    def add_download_list(self, file_hash, tracker_list):
-        for tracker in tracker_list:
-            self.c2t.add_request(tracker, file_hash)
-
-    def add_seeder(self, tracker_list, kurrent_file):
-        file_hash = self.parser.get_file_hash(kurrent_file)
-        for tracker in tracker_list:
-            self.c2t.add_seeder_request(tracker, file_hash)
-
-    def get_seeder_num(self, hash):
-        return ""
 
     def get_torrent_table(self):
         torrent_table = []

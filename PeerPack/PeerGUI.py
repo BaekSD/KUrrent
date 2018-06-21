@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import os, time
 
+
 class PeerGUI(QMainWindow):
     def __init__(self, core):
         super().__init__()

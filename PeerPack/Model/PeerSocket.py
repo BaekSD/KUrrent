@@ -1,6 +1,44 @@
 import socket, threading
+import json
 
-class PeerSocket:
+
+class PeerSocket(threading.Thread):
+    def __init__(self, client_socket):
+        self.client_socket = client_socket
+        threading.Thread.__init__(self)
+
+    def connect_to_peer(self):
+        ip, port, hash = self.get_peer()
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((ip, port))
+        return client_socket
+
+    def get_peer(self):
+        peer_dict = self.recv_msg()
+        return peer_dict.get('ip'), peer_dict.get('port'), peer_dict.get('hash')
+
+    def run(self):
+        self.client_socket = self.connect_to_peer()
+        while True:
+            # Transfer File Blocks in here
+            pass
+
+    def send_msg(self, msg):
+        msg = json.dumps(msg)
+        msg = msg.encode('utf-8')
+        self.client_socket.send(msg)
+
+    def recv_msg(self, buf_size=8192):
+        msg = self.client_socket.recv(buf_size)
+        msg = msg.decode('utf-8')
+        msg_dict = json.loads(msg)
+        return msg_dict
+
+
+
+
+
+    '''
 
     def __init__(self, ip='127.0.0.1', port=7777, core=None):
         self.ip = ip
@@ -12,7 +50,7 @@ class PeerSocket:
         self.comm_th = threading.Thread(target=self.run_request)
         self.comm_th.daemon = True
         self.comm_th.start()
-
+    '''
     def request_have(self, ip, port, hash, file_name, piece_num):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((ip, port))
