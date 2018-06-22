@@ -1,8 +1,7 @@
 from PeerPack import PeerGUI
 from PeerPack import PeerCore as Core
 from PeerPack import DBManager
-from PeerPack.Connection import ServerThread
-from PeerPack.Model import PeerSocket
+from PeerPack.Connection import ServerThread, PeerSocket
 from PyQt5.QtWidgets import *
 import sys
 
