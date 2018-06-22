@@ -1,11 +1,14 @@
 import socket, threading
 import json
 from PeerPack import db
+from . import FileManager
 
 class PeerSocket(threading.Thread):
     def __init__(self, peer):
         threading.Thread.__init__(self)
         self.peer = peer
+        self.list1 = []
+        self.lock = threading.Lock()
 
     def connect_to_peer(self):
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,6 +32,7 @@ class PeerSocket(threading.Thread):
         self.client_socket.send(msg)
 
     def recv_block(self, buf_size=8192):
+
         while True:
             msg = self.client_socket.recv(buf_size)
             file_hash, block_num, file_block = self.decode_block(msg)
@@ -37,7 +41,11 @@ class PeerSocket(threading.Thread):
                 break
             else:
                 # We Have To Do Here
+                file_manager = FileManager.FileManager(block_num, file_block)
+                self.lock.aquire()
+                file_manager.save_file()
                 db.put_block_info(file_hash, block_num)
+                self.lock.release()
                 pass
 
     def decode_block(self, msg):
