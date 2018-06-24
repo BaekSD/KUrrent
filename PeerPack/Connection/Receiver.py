@@ -1,12 +1,14 @@
 import threading
 import socket, json
-from PeerPack.Connection import PeerSocket
+from PeerPack.Connection import PeerSocket, ClientPeer, ServerPeer
 from PeerPack.Model import PeerVO
+
 
 class ServerThread(threading.Thread):
 
     def __init__(self, ip, port):
         threading.Thread.__init__(self)
+        self.setDaemon(True)
         self.peers_list = []
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((ip, port))
@@ -19,19 +21,26 @@ class ServerThread(threading.Thread):
         self.server_socket.listen(5)
         while True:
             # Wait For Peers
-            client_sock = self.wait_for_client()
-            peer_dict = self.recv_msg(client_sock)
-
+            client_socket = self.wait_for_client()
+            head, body = self.recv_msg(client_socket)
+            if head == 'DHT':
+                # Open ClientPeer, Peer Data we got from DHT should be {file_hash:'ip:port'}
+                peer_list = self.get_peers(body)
+                self.request_to_peer(peer_list)
+            elif head == 'PEER':
+                # Open Server Peer
+                peer = ServerPeer.ServerPeer(client_socket, body)
+                peer.start()
+            else:
+                print('Error')
             # Receive {file_hash:peer_list} from DHT(Master Peer)
-            peer_list = self.get_peers(peer_dict)
 
             # Start PeerSocket Thread to transfer File Block
-            self.request_to_peer(peer_list)
 
     def request_to_peer(self, peer_list):
         for peer in peer_list:
-            peer_socket = PeerSocket.PeerSocket(peer)
-            peer_socket.start()
+            client_peer = ClientPeer.ClientPeer(peer)
+            client_peer.start()
         self.peers_list += peer_list
 
     def get_peers(self, peer_dict):
@@ -49,4 +58,4 @@ class ServerThread(threading.Thread):
         msg = client_socket.recv(buf_size)
         msg = msg.decode('utf-8')
         msg_dict = json.loads(msg)
-        return msg_dict
+        return msg_dict['HEAD'], msg_dict['BODY']

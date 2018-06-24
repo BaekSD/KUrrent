@@ -107,6 +107,8 @@ class PeerCore:
         f.close()
 
         self.KUrrentLIST[sha]['size'] = total_size
+        # We have to do here => put client to dht and put data to database
+
 
     def get_file_list_recur(self, abs_path, file):
         if os.path.isfile(abs_path+file):
@@ -128,12 +130,11 @@ class PeerCore:
             return ret
 
     def add_torrent(self, file_name, saving_dir, tracker_text):
-        kurrent_file = open(file_name, 'rt')
-        file_hash = self.parser.get_file_hash(kurrent_file)
+        #kurrent_file = open(file_name, 'rt', encoding='utf-8')
+        file_hash = self.parser.get_file_hash(file_name)
         tracker_list = self.parser.parse_tracker_text(tracker_text)
-        file_list = self.parser.get_file_list(kurrent_file)
-        total_size = self.parser.get_total_size(kurrent_file)
-        kurrent_file.close()
+        file_list = self.parser.get_file_list(file_name)
+        total_size = self.parser.get_total_size(file_name)
 
         self.add_download_list(file_hash, tracker_list)
 
@@ -147,6 +148,12 @@ class PeerCore:
             self.KUrrentLIST[file_hash]['files'][i]['size'] = int(file_list[i])
             for j in range(int((int(file_list[i])+1023)/1024)):
                 self.KUrrentLIST[file_hash]['files'][i]['hash_table'].append(False)
+
+        # We have to do here => Request to DHT and DHT Should insert this peer into hash table and saving_dir should be added real file name
+        # File Manager should write file with real file name and size
+        from PeerPack import db, fm
+        db.put_file_info(file_hash, total_size, (total_size/8192) + 1, saving_dir)
+        fm.write_new_file(saving_dir, total_size)
 
 
     def get_torrent_table(self):

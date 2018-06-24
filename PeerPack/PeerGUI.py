@@ -263,7 +263,6 @@ class PeerGUI(QMainWindow):
         if os.path.isfile(self.addFileNameText.text()):
             tracker_text = self.addTrackerListText.toPlainText()#.split('\n')
             self.core.add_torrent(self.addFileNameText.text(), self.savingDirText.text(), tracker_text)
-            #self.core.add_download_list(self.addFileNameText.text(), self.savingDirText.text(), tracker_list)
             self.addDialog.destroy()
         else:
             QMessageBox.information(self.addDialog, "File not found", "File not found", QMessageBox.Ok)

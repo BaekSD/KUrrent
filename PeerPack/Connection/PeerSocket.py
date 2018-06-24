@@ -1,14 +1,12 @@
 import socket, threading
 import json
-from PeerPack import db
-from . import FileManager
+from PeerPack.Model import BlockVO
 
 class PeerSocket(threading.Thread):
-    def __init__(self, peer):
+    def __init__(self, peer=None, client_socket=None):
         threading.Thread.__init__(self)
         self.peer = peer
-        self.list1 = []
-        self.lock = threading.Lock()
+        self.client_socket = client_socket
 
     def connect_to_peer(self):
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,15 +14,21 @@ class PeerSocket(threading.Thread):
         return client_socket
 
     def run(self):
-        self.client_socket = self.connect_to_peer()
+        if self.peer is not None:
+            # Here is Client Peer
+            self.client_socket = self.connect_to_peer()
 
-        recv_th = threading.Thread(target=self.recv_block)
-        recv_th.daemon = False
-        recv_th.start()
+        from PeerPack import db
+        block_list = db.get_blocks(self.peer.file_hash)
 
+        if block_list.__len__() > 0:
+            # Receive File Blocks in here
+            send_th = threading.Thread(target=self.send_block)
+            send_th.daemon = False
+            send_th.start()
         while True:
-            # Send File Blocks in here
             pass
+
 
     def send_block(self, msg):
         msg = json.dumps(msg)
@@ -32,22 +36,25 @@ class PeerSocket(threading.Thread):
         self.client_socket.send(msg)
 
     def recv_block(self, buf_size=8192):
-
+        count = 0
+        last = -1
+        list = []
         while True:
             msg = self.client_socket.recv(buf_size)
-            file_hash, block_num, file_block = self.decode_block(msg)
+            block = self.decode_block(msg)
 
-            if block_num < 0:
+            if block.block_num < 0:
                 break
             else:
                 # We Have To Do Here
+                '''
                 file_manager = FileManager.FileManager(block_num, file_block)
                 self.lock.aquire()
                 file_manager.save_file()
                 db.put_block_info(file_hash, block_num)
                 self.lock.release()
                 pass
-
+                '''
     def decode_block(self, msg):
         msg = msg.decode('utf-8')
         file_dict = json.loads(msg)
@@ -55,7 +62,8 @@ class PeerSocket(threading.Thread):
         file_hash = file_dict.get('file_hash')
         block_num = file_dict.get('block_num')
         file_block = file_dict.get('file_block')
-        return file_hash, block_num, file_block
+        block = BlockVO.BlockVO(file_hash=file_hash, file_block=file_block, block_num=block_num)
+        return block
     '''
 
     def __init__(self, ip='127.0.0.1', port=7777, core=None):

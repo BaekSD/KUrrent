@@ -1,8 +1,36 @@
 import os
-
-
+import queue
+import asyncio
 class FileManager:
 
+    def __init__(self):
+        self.total_block_list = {}
+        self.block_q = queue.Queue()
+
+    def read_block_data(self, file_dir, index):
+        with open(file_dir, 'rb') as f:
+            f.seek(8192*(index-1))
+            block_data = f.read(8192)
+            return block_data
+
+    def write_block_data(self, file_dir, data, index):
+        with open(file_dir, 'wb+') as f:
+            # we have to do here
+            pass
+
+    def write_new_file(self, file_dir, file_size):
+        with open(file_dir, 'wb') as f:
+            f.seek(file_size-1)
+            f.write(b'\0')
+
+    '''def insert_block(self, block):
+        self.block_q.put(block)
+        try:
+            self.total_block_list[block.file_hash].append(block)
+        except Exception as e:
+            block_list = [block]
+            self.total_block_list[block.file_hash] = block_list
+    
     def __init__(self, block_num, file_block):
         self.s = ''
         self.count = 0
@@ -81,3 +109,4 @@ class FileManager:
             return True
         else:
             return False
+    '''
