@@ -1,4 +1,4 @@
-import math, random, threading, socket, time
+import math, random, threading, socket, time, json
 
 num = 0
 
@@ -6,8 +6,8 @@ num = 0
 msg code explanation
 
     request_111(self, ip, port, req_ip, req_port, num):     check num is usable
-        ip & port : ask to this peer
-        req_ip & req_port : answer to this peer
+        ip & port : ask to this tracker
+        req_ip & req_port : answer to this tracker
         num : ask that is this num usable
 
     request_222(self, ip, port, num):                       answer that the number 'num' is usable
@@ -17,27 +17,27 @@ msg code explanation
         ip & port : req_ip & req_port at request_111
     
     request_444(self, ip, port, req_ip, req_port, num):     request that who has the responsibility of num
-        ip & port : ask to this peer
-        req_ip & req_port : answer to this peer
+        ip & port : ask to this tracker
+        req_ip & req_port : answer to this tracker
         num : ask that who has the responsibility of num
     
-    request_555(self, ip, port, num, req_ip, req_port, num2):   answer that this peer is responsibility for the number 'num'
+    request_555(self, ip, port, num, req_ip, req_port, num2):   answer that this tracker is responsibility for the number 'num'
     
-    request_666(self, ip, port, min, max, count):           broadcast that peer that has ip&port is responsibility for min ~ max
+    request_666(self, ip, port, min, max, count):           broadcast that tracker that has ip&port is responsibility for min ~ max
         ip & port : my ip & port
         min & max : number min & max
-        count : first peer - 0 ~ bit_len
-                second peer - 0 ~ bit_len-1
+        count : first tracker - 0 ~ bit_len
+                second tracker - 0 ~ bit_len-1
                 ...
-                last peer - 0 ~ 0
+                last tracker - 0 ~ 0
                 hard to explain by text....
 '''
 
-class Peer():
-    def __init__(self, ip, port, master_ip, master_port, master_peer=False, bit_len=256):
+class Tracker():
+    def __init__(self, ip, port, master_ip, master_port, master_tracker=False, bit_len=256):
         self.bit_len = bit_len
         self.key_range = int(math.pow(2,bit_len))
-        self.master_peer = master_peer
+        self.master_tracker = master_tracker
         self.ip = ip
         self.port = port
         self.num = -1
@@ -57,10 +57,10 @@ class Peer():
         self.server_th = threading.Thread(target=self.run_sock)
         self.server_th.daemon = True
         self.server_th.start()
-        self.init_peer()
+        self.init_tracker()
 
-    def init_peer(self):    # join in dht
-        if self.master_peer:
+    def init_tracker(self):    # join in dht
+        if self.master_tracker:
             self.num = 0
             self.min = (self.num+1) % self.key_range
             self.max = self.num
@@ -104,6 +104,8 @@ class Peer():
             self.response_555(msg_ele)
         elif msg_code == '666':
             self.response_666(msg_ele)
+        elif msg_code == 'get_peers':
+            self.response_peers(msg_ele)
         conn.close()
 
     def request_000(self, ip, port):
@@ -130,7 +132,7 @@ class Peer():
         ip = msg[1]
         port = int(msg[2])
         num = int(msg[3])
-        if self.master_peer:
+        if self.master_tracker:
             self.joining_sem.acquire()
         print('acquired : ' + str(port) + ' : ' + str(num))
         if self.min <= self.max:
@@ -142,7 +144,7 @@ class Peer():
                 self.request_333(ip, port, num)
                 # send the number 'num' is not ok
             else:
-                # bypass to another peer
+                # bypass to another tracker
                 for i in range(self.bit_len):
                     low = (self.num + int(math.pow(2, i))) % self.key_range
                     high = (self.num + int(math.pow(2, i + 1))) % self.key_range
@@ -173,7 +175,7 @@ class Peer():
                 self.request_333(ip, port, num)
                 # send the number 'num' is not ok
             else:
-                # bypass to another peer
+                # bypass to another tracker
                 for i in range(self.bit_len):
                     low = (self.num + int(math.pow(2, i))) % self.key_range
                     high = (self.num + int(math.pow(2, i + 1))) % self.key_range
@@ -265,10 +267,10 @@ class Peer():
         num = int(msg[3])
         if self.min <= self.max:
             if self.min <= num and num <= self.max:
-                # response that this peer has responsibility of num
+                # response that this tracker has responsibility of num
                 self.request_555(self.ip, self.port, self.num, ip, port, num)
             else:
-                # bypass this msg to another peer
+                # bypass this msg to another tracker
                 for i in range(self.bit_len):
                     low = (self.num + int(math.pow(2,i))) % self.key_range
                     high = (self.num + int(math.pow(2,i+1))) % self.key_range
@@ -288,13 +290,13 @@ class Peer():
                             break
         else:
             if self.min <= num and num < self.key_range:
-                # response that this peer has responsibility of num
+                # response that this tracker has responsibility of num
                 self.request_555(self.ip, self.port, self.num, ip, port, num)
             elif 0 <= num and num <= self.max:
-                # response that this peer has responsibility of num
+                # response that this tracker has responsibility of num
                 self.request_555(self.ip, self.port, self.num, ip, port, num)
             else:
-                # bypass this msg to another peer
+                # bypass this msg to another tracker
                 for i in range(self.bit_len):
                     low = (self.num + int(math.pow(2,i))) % self.key_range
                     high = (self.num + int(math.pow(2,i+1))) % self.key_range
@@ -314,7 +316,7 @@ class Peer():
                             break
 
     def request_555(self, ip, port, num, req_ip, req_port, num2):
-        # inform the responsibility of num is on this peer
+        # inform the responsibility of num is on this tracker
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((req_ip, int(req_port)))
             msg = "555,"+str(ip)+':'+str(port)+","+str(num)+','+str(num2)
@@ -332,7 +334,7 @@ class Peer():
                 break
 
     def request_666(self, ip, port, min, max, count):
-        # broadcast that this peer is responsible for min ~ max
+        # broadcast that this tracker is responsible for min ~ max
         if count == self.bit_len+1:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect((self.master_ip, self.master_port))
@@ -371,6 +373,65 @@ class Peer():
                     self.dht_table[i][1] = int(max)
                     self.dht_table[i][2] = ip+':'+port
         self.request_666(ip, port, min, max, count)
+
+    def response_peers(self, msg):
+        hash = int(msg[1], 16)
+        ip = msg[2]
+        port = msg[3]
+
+        if self.min <= self.max and self.min <= hash and hash <= self.max:
+            # send the peers to ip & port
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((ip, int(port)))
+                peer_dict = {
+                    'HEAD': 'DHT',
+                    'BODY': []
+                }
+                if hash in self.hash_table.keys():
+                    for i in self.hash_table[hash]:
+                        peer_dict['BODY'].append(i)
+                msg = json.dumps(peer_dict)
+                msg = msg.encode('utf-8')
+                s.send(msg.encode())
+        elif self.min > self.max and ((self.min <= hash and hash < self.key_range) or (0 <= hash and hash <= self.max)):
+            # send the peers to ip & port
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((ip, int(port)))
+                peer_dict = {
+                    'HEAD': 'DHT',
+                    'BODY': []
+                }
+                if hash in self.hash_table.keys():
+                    for i in self.hash_table[hash]:
+                        peer_dict['BODY'].append(i)
+                msg = json.dumps(peer_dict)
+                msg = msg.encode('utf-8')
+                s.send(msg.encode())
+        else:
+            # bypass the request to other tracker
+            for i in range(self.bit_len):
+                low = (self.num + int(math.pow(2, i))) % self.key_range
+                high = (self.num + int(math.pow(2, i + 1))) % self.key_range
+                if low <= high:
+                    if low <= num and num < high:
+                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                            s.connect((bypass_ip, int(bypass_port)))
+                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
+                        break
+                else:
+                    if low <= num and num < self.key_range:
+                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                            s.connect((bypass_ip, int(bypass_port)))
+                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
+                        break
+                    elif 0 <= num and num < high:
+                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                            s.connect((bypass_ip, int(bypass_port)))
+                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
+                        break
 
     def run_init(self):
         self.joining_sem.acquire()
@@ -422,18 +483,18 @@ class Peer():
                 self.request_000(self.master_ip, self.master_port)
         self.request_000(self.master_ip, self.master_port)
         self.init_finished = True
-        print('joined as peer'+str(self.num))
+        print('joined as tracker'+str(self.num))
         print('the time taken is ' + str(time.time()-start_time) + 's\n')
 
     def print_all(self):
-        print("peer" + str(self.num))
+        print("tracker" + str(self.num))
         print("min : " + str(self.min))
         print("max : " + str(self.max))
         print()
-        #print("dht_table of peer" + str(self.num) + " - " + str(self.ip) + ":" + str(self.port))
+        #print("dht_table of tracker" + str(self.num) + " - " + str(self.ip) + ":" + str(self.port))
         #for i in self.dht_table:
         #    print(i)
-        #print("hash_table of peer" + str(self.num) + " - " + str(self.ip) + ":" + str(self.port))
+        #print("hash_table of tracker" + str(self.num) + " - " + str(self.ip) + ":" + str(self.port))
         #print(self.hash_table)
         #for i in self.hash_table.items():
         #    print(i)
@@ -442,23 +503,23 @@ class Peer():
         self.close_sock = True
 
 if __name__ == "__main__":
-    master_peer = Peer(ip='127.0.0.1', port=15000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=True)
-    peer1 = Peer(ip='127.0.0.1', port=16000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=False)
-    peer2 = Peer(ip='127.0.0.1', port=17000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=False)
-    peer3 = Peer(ip='127.0.0.1', port=18000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=False)
+    master_tracker = Tracker(ip='127.0.0.1', port=15000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=True)
+    tracker1 = Tracker(ip='127.0.0.1', port=16000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=False)
+    tracker2 = Tracker(ip='127.0.0.1', port=17000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=False)
+    tracker3 = Tracker(ip='127.0.0.1', port=18000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=False)
 
-    while not peer3.init_finished:
+    while not tracker3.init_finished:
         pass
     #time.sleep(1)
 
     print("\n-----result-----\n")
-    master_peer.print_all()
-    peer1.print_all()
-    peer2.print_all()
-    peer3.print_all()
+    master_tracker.print_all()
+    tracker1.print_all()
+    tracker2.print_all()
+    tracker3.print_all()
 '''
-    master_peer.close()
-    peer1.close()
-    peer2.close()
-    peer3.close()
+    master_tracker.close()
+    tracker1.close()
+    tracker2.close()
+    tracker3.close()
 '''
