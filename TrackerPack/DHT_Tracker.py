@@ -604,8 +604,9 @@ class Tracker():
         self.close_sock = True
 
 if __name__ == "__main__":
-    ip = str(socket.gethostbyname(socket.getfqdn()))
-
+    ip = '192.168.43.197'
+    #ip = str(socket.gethostbyname(socket.getfqdn()))
+    #print(ip)
     master_tracker = Tracker(ip=ip, port=15000 + num, master_ip=ip, master_port=15000 + num, master_tracker=True)
     tracker1 = Tracker(ip=ip, port=16000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
     tracker2 = Tracker(ip=ip, port=17000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
@@ -632,7 +633,7 @@ if __name__ == "__main__":
 
 
     time.sleep(1)
-
+    '''
     hash = '365ec63a43faa5b2ce109561b17e3ca200586b55a0d2ef94bc7e869ba4d69d92'
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((ip, 15000+num))
@@ -647,8 +648,9 @@ if __name__ == "__main__":
         msg = 'get_peers,' + hash + ',' + ip + ',15900'
         s.send(msg.encode())
 
-
+    '''
     time.sleep(10000)
+
 '''
     master_tracker.close()
     tracker1.close()

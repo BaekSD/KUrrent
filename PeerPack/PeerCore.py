@@ -1,10 +1,6 @@
 import os, hashlib, sys
 from PeerPack import KurrentParser
 
-num = 10
-master_ip = "192.168.43.242"
-master_port = 15000 + num
-
 class PeerCore:
     def __init__(self, server):
         self.KUrrentLIST = {}
@@ -109,7 +105,7 @@ class PeerCore:
         from PeerPack import db
         db.put_total_blocks(block_tuples)
         db.put_file_info(sha.hexdigest(), size, (size / 8192) + 1, sharing_file)
-        self.server.connect_to_dht('add_peer', sha.hexdigest(), master_ip, master_port)
+        self.server.connect_to_dht(msg='add_peer', file_hash=sha.hexdigest())#, master_ip, master_port)
 
     def get_file_list_recur(self, abs_path, file):
         if os.path.isfile(abs_path + file):
@@ -164,7 +160,7 @@ class PeerCore:
         db.put_file_info(file_hash, size, (size / 8192) + 1, file_path)
         fm.write_new_file(file_path, size)
 
-        self.server.connect_to_dht('get_peers', file_hash, master_ip, master_port)
+        self.server.connect_to_dht(msg='get_peers', file_hash=file_hash)
 
     def get_torrent_table(self):
         torrent_table = []

@@ -5,12 +5,12 @@ from PeerPack.Connection import Receiver
 from PyQt5.QtWidgets import *
 import sys
 
-ip = '172.16.29.203'
+ip = '192.168.43.197'
 port = 7777
 
-db = DBManager.DBManager()
-fm = FileManager.FileManager()
 server = Receiver.ServerThread(ip, port)
+db = DBManager.DBManager()
+fm = FileManager.FileManager(server.lock)
 core = Core.PeerCore(server)
 app = QApplication(sys.argv)
 gui = PeerGUI.PeerGUI(core)

@@ -1,18 +1,19 @@
 import socket, threading, json
-import random
+import random, binascii
 from PeerPack.Model import BlockVO
 
 class ServerPeer(threading.Thread):
 
-    def __init__(self, client_socket, file_hash, lock):
+    def __init__(self, client_socket, file_hash):
         threading.Thread.__init__(self)
         self.client_socket = client_socket
         self.file_hash = file_hash
-        self.lock = lock
         from PeerPack import db
         self.file_path, self.last_index = db.get_file_data(self.file_hash)
 
     def run(self):
+        conn_dict = self.create_dict('CONN', 'SUCCESS')
+        self.send_msg(conn_dict)
         self.recv_msg()
 
     def create_dict(self, head, body, foot=None):
@@ -37,25 +38,26 @@ class ServerPeer(threading.Thread):
         msg = json.dumps(msg)
         msg = msg.encode('utf-8')
         self.client_socket.send(msg)
-
+        print('send=>'+str(msg))
     def recv_msg(self, buf_size=10000):
         from PeerPack import fm, db
 
         while True:
             msg = self.client_socket.recv(buf_size)
+            print(msg)
             head, body = self.decode_msg(msg)
 
             my_block_list = db.get_blocks(self.file_hash)
 
-            if head is 'BOOTSTRAP_PHASE':
+            if head == 'BOOTSTRAP_PHASE':
                 self.send_block(my_block_list)
-            elif head is 'DOWNLOAD_PHASE':
+            elif head == 'DOWNLOAD_PHASE':
                 self.send_block(my_block_list, body)
-            elif head is 'LAST_PHASE':
+            elif head == 'LAST_PHASE':
                 self.send_block(my_block_list, body)
-            elif head is 'COMPLETE_PHASE':
+            elif head == 'COMPLETE_PHASE':
                 break
-            elif head is 'ASK':
+            elif head == 'ASK':
                 phase, request_block = self.get_status()
                 if phase is not 'COMPLETE_PHASE':
                     msg_dict = self.create_dict('QUIT', 'QUIT')
@@ -63,14 +65,13 @@ class ServerPeer(threading.Thread):
                     msg_dict = self.create_dict('REQ', request_block)
                 self.send_msg(msg_dict)
 
-            elif head is 'BLOCK':
+            elif head == 'BLOCK':
                 block_num = msg['FOOT']
-                block = BlockVO.BlockVO(file_hash=self.file_hash, file_path=self.file_path, block_num=block_num, block_data=body)
+                byte_data = binascii.unhexlify(body.encode('utf-8'))
+                block = BlockVO.BlockVO(file_hash=self.file_hash, file_path=self.file_path, block_num=block_num, block_data=byte_data)
                 fm.insert_block(block)
-            elif head is 'QUIT':
-                self.lock.aquire()
+            elif head == 'QUIT':
                 fm.request_write_blocks()
-                self.lock.release()
                 break
 
     def get_status(self):
@@ -107,15 +108,19 @@ class ServerPeer(threading.Thread):
 
         for i in range(send_block_list.__len__()):
             from PeerPack import fm
-            block_dict = self.create_dict('BLOCK', fm.read_block_data(self.file_path, send_block_list[i]), send_block_list[i])
+            byte_data = fm.read_block_data(self.file_path, send_block_list[i])
+            hex_data = binascii.hexlify(byte_data)
+            str_data = hex_data.decode('utf-8')
+            block_dict = self.create_dict('BLOCK', str_data, int(send_block_list[i]))
             self.send_msg(block_dict)
 
     def choice_block(self, send_block_list):
         send_list = []
         try:
             for i in range(10):
-                data = send_block_list.pop(random.choice(send_block_list))
-                send_list.append(data)
+                block_num = random.choice(send_block_list)
+                send_list.append(block_num)
+                send_block_list.remove(block_num)
         except Exception as e:
             print(e)
         return send_list

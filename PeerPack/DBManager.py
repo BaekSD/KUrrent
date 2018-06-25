@@ -5,6 +5,8 @@ import uuid, os
 class DBManager:
 
     def __init__(self):
+        if not os.path.exists('Files'):
+            os.mkdir('Files')
         db_file = os.path.join('Files', 'Kurrent.db')
         self.conn = sqlite3.connect(db_file, check_same_thread=False)
         self.cursor = self.conn.cursor()

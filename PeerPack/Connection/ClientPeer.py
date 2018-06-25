@@ -1,12 +1,11 @@
-import socket, threading, json
+import socket, threading, json, binascii
 from PeerPack.Model import BlockVO
 import random
 
 class ClientPeer(threading.Thread):
-    def __init__(self, peer, lock):
+    def __init__(self, peer):
         threading.Thread.__init__(self)
         self.peer = peer
-        self.lock = lock
         self.client_socket = self.connect_to_peer()
         from PeerPack import db
         self.file_path, self.last_index = db.get_file_data(self.peer.file_hash)
@@ -17,9 +16,10 @@ class ClientPeer(threading.Thread):
         return client_socket
 
     def run(self):
+        peer_dict = self.create_dict('PEER', self.peer.file_hash)
+        self.send_msg(peer_dict)
         status, body = self.get_status()
-        self.send_status(status, body)
-        if status is not 'COMPLETE_PHASE':
+        if status != 'COMPLETE_PHASE':
             self.recv_msg()
 
     def send_status(self, status, body):
@@ -60,37 +60,58 @@ class ClientPeer(threading.Thread):
         msg = json.dumps(msg)
         msg = msg.encode('utf-8')
         self.client_socket.send(msg)
+        print(msg)
 
     def recv_msg(self, buf_size=10000):
         from PeerPack import fm, db
 
         while True:
             msg = self.client_socket.recv(buf_size)
-            head, body = self.decode_msg(msg)
+            print(msg)
+            head, body, block_num = self.decode_msg(msg)
 
             my_block_list = db.get_blocks(self.peer.file_hash)
 
-            if head is 'BLOCK':
-                block_num = msg['FOOT']
+            if head == 'BLOCK':
+                #block_num = msg['FOOT']
+                byte_data = binascii.unhexlify(body.encode('utf-8'))
                 block = BlockVO.BlockVO(file_hash=self.peer.file_hash, file_path=self.file_path, block_num=block_num,
-                                        block_data=body)
+                                        block_data=byte_data)
 
                 fm.insert_block(block)
 
                 msg_dict = self.create_dict('ASK', 'ASK')
                 self.send_msg(msg_dict)
 
-            elif head is 'REQ':
+            elif head == 'REQ':
                 self.send_block(my_block_list, body)
                 msg_dict = self.create_dict('QUIT', 'QUIT')
                 self.send_msg(msg_dict)
                 break
-            elif head is 'QUIT':
+            elif head == 'QUIT':
                 msg_dict = self.create_dict('QUIT', 'QUIT')
                 self.send_msg(msg_dict)
 
                 fm.request_write_blocks()
-                break
+
+                quit_flag = self.request_to_dht()
+                if quit_flag is True:
+                    break
+            else:
+                status, body = self.get_status()
+                self.send_status(status, body)
+
+    def request_to_dht(self):
+        from PeerPack import core
+
+        quit_flag = True
+        status = self.get_status()
+        if status != 'COMPLETE_PHASE':
+            core.server.connect_to_dht(msg='get_peers', file_hash=self.peer.file_hash)
+            quit_flag = False
+        else:
+            core.server.connect_to_dht(msg='add_peer', file_hash=self.peer.file_hash)
+        return quit_flag
 
     def send_block(self, my_block_list, request_block_list):
         send_block_list = []
@@ -102,7 +123,10 @@ class ClientPeer(threading.Thread):
 
         for i in range(send_block_list.__len__()):
             from PeerPack import fm
-            block_dict = self.create_dict('BLOCK', fm.read_block_data(self.file_path, send_block_list[i]), send_block_list[i])
+            byte_data = fm.read_block_data(self.file_path, send_block_list[i])
+            hex_data = binascii.hexlify(byte_data)
+            str_data = hex_data.decode('utf-8')
+            block_dict = self.create_dict('BLOCK', str_data, send_block_list[i])
             self.send_msg(block_dict)
 
     def choice_block(self, request_block_list):
@@ -118,7 +142,10 @@ class ClientPeer(threading.Thread):
     def decode_msg(self, msg):
         msg = msg.decode('utf-8')
         file_dict = json.loads(msg)
-        return file_dict['HEAD'], file_dict['BODY']
+        block_num = -1
+        if file_dict['HEAD'] == 'BLOCK':
+            block_num = file_dict['FOOT']
+        return file_dict['HEAD'], file_dict['BODY'], block_num
 
     def create_dict(self, head, body, foot=None):
         msg_dict = {

@@ -3,8 +3,9 @@ import queue
 import asyncio
 class FileManager:
 
-    def __init__(self):
+    def __init__(self, lock):
         self.total_block_list = {}
+        self.lock = lock
 
     def insert_block(self, block):
         try:
@@ -33,11 +34,16 @@ class FileManager:
             f.write(b'\0')
 
     def request_write_blocks(self):
-        futures = [self.write_block_data(self.total_block_list[file_hash]) for file_hash in self.total_block_list]
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(asyncio.wait(futures))
-        loop.close()
-
+        self.lock.acquire()
+        try:
+            futures = [self.write_block_data(self.total_block_list[file_hash]) for file_hash in self.total_block_list]
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(asyncio.wait(futures))
+            loop.close()
+        except Exception as e:
+            print(e)
+        finally:
+            self.lock.release()
 
     '''def insert_block(self, block):
         self.block_q.put(block)

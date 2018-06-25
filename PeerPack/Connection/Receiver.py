@@ -1,5 +1,5 @@
 import threading
-import socket, json
+import socket, json, binascii
 from PeerPack.Connection import ClientPeer, ServerPeer
 from PeerPack.Model import PeerVO
 
@@ -9,10 +9,10 @@ class ServerThread(threading.Thread):
     def __init__(self, ip, port):
         threading.Thread.__init__(self)
         self.setDaemon(True)
+        self.lock = threading.Semaphore(1)
         self.peers_list = []
         self.ip = ip
         self.port = port
-        self.lock = threading.Lock()
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((ip, port))
 
@@ -33,7 +33,7 @@ class ServerThread(threading.Thread):
                 self.request_to_peer(peer_list)
             elif head == 'PEER':
                 # Open Server Peer
-                peer = ServerPeer.ServerPeer(client_socket, body, self.lock)
+                peer = ServerPeer.ServerPeer(client_socket, body)
                 peer.start()
             else:
                 print('Error')
@@ -42,7 +42,7 @@ class ServerThread(threading.Thread):
 
     def request_to_peer(self, peer_list):
         for peer in peer_list:
-            client_peer = ClientPeer.ClientPeer(peer, self.lock)
+            client_peer = ClientPeer.ClientPeer(peer)
             client_peer.start()
         self.peers_list += peer_list
 
@@ -64,7 +64,7 @@ class ServerThread(threading.Thread):
         msg_dict = json.loads(msg)
         return msg_dict['HEAD'], msg_dict['BODY']
 
-    def connect_to_dht(self, request, file_hash, master_ip, master_port):
+    def connect_to_dht(self, request, file_hash, master_ip="192.168.43.197", master_port=15010):
         msg = request + ',' + file_hash + ',' + str(self.ip) + ',' + str(self.port)
         try:
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
