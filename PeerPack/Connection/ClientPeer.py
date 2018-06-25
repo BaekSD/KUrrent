@@ -21,6 +21,9 @@ class ClientPeer(threading.Thread):
         status, body = self.get_status()
         if status != 'COMPLETE_PHASE':
             self.recv_msg()
+        else:
+            msg_dict = self.create_dict('QUIT', 'QUIT')
+            self.send_msg(msg_dict)
 
     def send_status(self, status, body):
         request_dict = self.create_dict(status, body)
@@ -49,7 +52,7 @@ class ClientPeer(threading.Thread):
 
     def get_needed_blocks(self):
         from PeerPack import db
-        block_list = db.get_blocks('test')
+        block_list = db.get_blocks(self.peer.file_hash)
         request_list = []
         for i in range(self.last_index):
             if not block_list.__contains__(i + 1):
@@ -62,55 +65,58 @@ class ClientPeer(threading.Thread):
         self.client_socket.send(msg)
         print(msg)
 
-    def recv_msg(self, buf_size=10000):
+    def recv_msg(self, buf_size=20000):
         from PeerPack import fm, db
 
         while True:
-            msg = self.client_socket.recv(buf_size)
-            print(msg)
-            head, body, block_num = self.decode_msg(msg)
+            try:
+                msg = self.client_socket.recv(buf_size)
+                print('Receive' + str(msg))
+                head, body, block_num = self.decode_msg(msg)
 
-            my_block_list = db.get_blocks(self.peer.file_hash)
+                my_block_list = db.get_blocks(self.peer.file_hash)
 
-            if head == 'BLOCK':
-                #block_num = msg['FOOT']
-                byte_data = binascii.unhexlify(body.encode('utf-8'))
-                block = BlockVO.BlockVO(file_hash=self.peer.file_hash, file_path=self.file_path, block_num=block_num,
-                                        block_data=byte_data)
+                if head == 'BLOCK':
+                    #block_num = msg['FOOT']
+                    byte_data = binascii.unhexlify(body.encode('utf-8'))
+                    block = BlockVO.BlockVO(file_hash=self.peer.file_hash, file_path=self.file_path, block_num=block_num,
+                                            block_data=byte_data)
+                    fm.insert_block(block)
 
-                fm.insert_block(block)
-
-                msg_dict = self.create_dict('ASK', 'ASK')
-                self.send_msg(msg_dict)
-
-            elif head == 'REQ':
-                self.send_block(my_block_list, body)
-                msg_dict = self.create_dict('QUIT', 'QUIT')
-                self.send_msg(msg_dict)
-                break
-            elif head == 'QUIT':
-                msg_dict = self.create_dict('QUIT', 'QUIT')
-                self.send_msg(msg_dict)
-
-                fm.request_write_blocks()
-
-                quit_flag = self.request_to_dht()
-                if quit_flag is True:
+                elif head == 'REQ':
+                    self.send_block(my_block_list, body)
+                    msg_dict = self.create_dict('QUIT', 'QUIT')
+                    self.send_msg(msg_dict)
                     break
-            else:
-                status, body = self.get_status()
-                self.send_status(status, body)
+                elif head == 'QUIT':
+                    msg_dict = self.create_dict('QUIT', 'QUIT')
+                    self.send_msg(msg_dict)
+
+                    fm.request_write_blocks()
+
+                    quit_flag = self.request_to_dht()
+                    if quit_flag is True:
+                        break
+                elif head == 'FINISH':
+                    msg_dict = self.create_dict('ASK', 'ASK')
+                    self.send_msg(msg_dict)
+                else:
+                    status, body = self.get_status()
+                    self.send_status(status, body)
+            except Exception as e:
+                print('error'+str(e))
+                break
 
     def request_to_dht(self):
         from PeerPack import core
 
         quit_flag = True
-        status = self.get_status()
+        status, body = self.get_status()
         if status != 'COMPLETE_PHASE':
-            core.server.connect_to_dht(msg='get_peers', file_hash=self.peer.file_hash)
+            core.server.connect_to_dht(request='get_peers', file_hash=self.peer.file_hash)
             quit_flag = False
         else:
-            core.server.connect_to_dht(msg='add_peer', file_hash=self.peer.file_hash)
+            core.server.connect_to_dht(request='add_peer', file_hash=self.peer.file_hash)
         return quit_flag
 
     def send_block(self, my_block_list, request_block_list):

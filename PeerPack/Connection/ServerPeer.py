@@ -1,5 +1,5 @@
 import socket, threading, json
-import random, binascii
+import random, binascii, time
 from PeerPack.Model import BlockVO
 
 class ServerPeer(threading.Thread):
@@ -38,40 +38,45 @@ class ServerPeer(threading.Thread):
         msg = json.dumps(msg)
         msg = msg.encode('utf-8')
         self.client_socket.send(msg)
-        print('send=>'+str(msg))
+        print('send=>'+str(msg) + str(msg.__sizeof__()))
+
     def recv_msg(self, buf_size=10000):
         from PeerPack import fm, db
-
         while True:
-            msg = self.client_socket.recv(buf_size)
-            print(msg)
-            head, body = self.decode_msg(msg)
+            try:
+                msg = self.client_socket.recv(buf_size)
+                print('Receive'+str(msg))
 
-            my_block_list = db.get_blocks(self.file_hash)
+                head, body = self.decode_msg(msg)
 
-            if head == 'BOOTSTRAP_PHASE':
-                self.send_block(my_block_list)
-            elif head == 'DOWNLOAD_PHASE':
-                self.send_block(my_block_list, body)
-            elif head == 'LAST_PHASE':
-                self.send_block(my_block_list, body)
-            elif head == 'COMPLETE_PHASE':
-                break
-            elif head == 'ASK':
-                phase, request_block = self.get_status()
-                if phase is not 'COMPLETE_PHASE':
-                    msg_dict = self.create_dict('QUIT', 'QUIT')
-                else:
-                    msg_dict = self.create_dict('REQ', request_block)
-                self.send_msg(msg_dict)
+                my_block_list = db.get_blocks(self.file_hash)
 
-            elif head == 'BLOCK':
-                block_num = msg['FOOT']
-                byte_data = binascii.unhexlify(body.encode('utf-8'))
-                block = BlockVO.BlockVO(file_hash=self.file_hash, file_path=self.file_path, block_num=block_num, block_data=byte_data)
-                fm.insert_block(block)
-            elif head == 'QUIT':
-                fm.request_write_blocks()
+                if head == 'BOOTSTRAP_PHASE':
+                    self.send_block(my_block_list)
+                elif head == 'DOWNLOAD_PHASE':
+                    self.send_block(my_block_list, body)
+                elif head == 'LAST_PHASE':
+                    self.send_block(my_block_list, body)
+                elif head == 'COMPLETE_PHASE':
+                    break
+                elif head == 'ASK':
+                    phase, request_block = self.get_status()
+                    if phase != 'COMPLETE_PHASE':
+                        msg_dict = self.create_dict('REQ', request_block)
+                    else:
+                        msg_dict = self.create_dict('QUIT', 'QUIT')
+                    self.send_msg(msg_dict)
+
+                elif head == 'BLOCK':
+                    block_num = msg['FOOT']
+                    byte_data = binascii.unhexlify(body.encode('utf-8'))
+                    block = BlockVO.BlockVO(file_hash=self.file_hash, file_path=self.file_path, block_num=block_num, block_data=byte_data)
+                    fm.insert_block(block)
+                elif head == 'QUIT':
+                    fm.request_write_blocks()
+                    break
+            except Exception as e:
+                print(e)
                 break
 
     def get_status(self):
@@ -113,6 +118,10 @@ class ServerPeer(threading.Thread):
             str_data = hex_data.decode('utf-8')
             block_dict = self.create_dict('BLOCK', str_data, int(send_block_list[i]))
             self.send_msg(block_dict)
+            time.sleep(1)
+
+        finish_dict = self.create_dict('FINISH', 'FINISH')
+        self.send_msg(finish_dict)
 
     def choice_block(self, send_block_list):
         send_list = []
