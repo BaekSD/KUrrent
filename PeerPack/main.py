@@ -9,5 +9,5 @@ if __name__ == "__main__":
         gui_th = threading.Thread(target=gui.update_torrent_list)
         gui_th.daemon = True
         gui_th.start()
-    except RuntimeError:
-        pass
+    except Exception as e:
+        print(e)

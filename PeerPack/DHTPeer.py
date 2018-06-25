@@ -33,8 +33,9 @@ msg code explanation
                 hard to explain by text....
 '''
 
-class Peer():
+class Peer(threading.Thread):
     def __init__(self, ip, port, master_ip, master_port, master_peer=False, bit_len=256):
+        threading.Thread.__init__(self)
         self.bit_len = bit_len
         self.key_range = int(math.pow(2,bit_len))
         self.master_peer = master_peer
@@ -54,9 +55,10 @@ class Peer():
         self.num_init_table_finish = 0
         self.close_sock = False
         self.init_finished = False
-        self.server_th = threading.Thread(target=self.run_sock)
-        self.server_th.daemon = True
-        self.server_th.start()
+        self.start()
+        #self.server_th = threading.Thread(target=self.run_sock)
+        #self.server_th.daemon = True
+        #self.server_th.start()
         self.init_peer()
 
     def init_peer(self):    # join in dht
@@ -71,6 +73,9 @@ class Peer():
             init_th = threading.Thread(target=self.run_init)
             init_th.daemon = True
             init_th.start()
+    def run(self):
+        while True:
+            self.run_sock()
 
     def run_sock(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -442,8 +447,11 @@ class Peer():
         self.close_sock = True
 
 if __name__ == "__main__":
-    master_peer = Peer(ip='127.0.0.1', port=15000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=True)
-    peer1 = Peer(ip='127.0.0.1', port=16000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=False)
+    ip = "172.16.8.5"
+    port = 15000 + num
+    master_peer = Peer(ip=ip, port=port, master_ip=ip, master_port=port, master_peer=True)
+
+    '''peer1 = Peer(ip='127.0.0.1', port=16000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=False)
     peer2 = Peer(ip='127.0.0.1', port=17000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=False)
     peer3 = Peer(ip='127.0.0.1', port=18000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_peer=False)
 
@@ -456,9 +464,9 @@ if __name__ == "__main__":
     peer1.print_all()
     peer2.print_all()
     peer3.print_all()
-'''
+
     master_peer.close()
     peer1.close()
     peer2.close()
     peer3.close()
-'''
+    '''

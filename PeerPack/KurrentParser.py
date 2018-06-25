@@ -33,7 +33,7 @@ class Parser:
         return tracker_list
 
     def get_file_name(self, kurrent_file):
-        file_info = self.get_file_info()
+        file_info = self.get_file_info(kurrent_file)
         return file_info[-2]
 
     def get_size(self, kurrent_file):

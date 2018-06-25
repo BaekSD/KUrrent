@@ -10,6 +10,9 @@ class ServerThread(threading.Thread):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self.peers_list = []
+        self.ip = ip
+        self.port = port
+        self.lock = threading.Lock()
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((ip, port))
 
@@ -23,13 +26,14 @@ class ServerThread(threading.Thread):
             # Wait For Peers
             client_socket = self.wait_for_client()
             head, body = self.recv_msg(client_socket)
+            print(head, body)
             if head == 'DHT':
                 # Open ClientPeer, Peer Data we got from DHT should be {file_hash:'ip:port'}
                 peer_list = self.get_peers(body)
                 self.request_to_peer(peer_list)
             elif head == 'PEER':
                 # Open Server Peer
-                peer = ServerPeer.ServerPeer(client_socket, body)
+                peer = ServerPeer.ServerPeer(client_socket, body, self.lock)
                 peer.start()
             else:
                 print('Error')
@@ -39,7 +43,7 @@ class ServerThread(threading.Thread):
 
     def request_to_peer(self, peer_list):
         for peer in peer_list:
-            client_peer = ClientPeer.ClientPeer(peer)
+            client_peer = ClientPeer.ClientPeer(peer, self.lock)
             client_peer.start()
         self.peers_list += peer_list
 
@@ -59,3 +63,12 @@ class ServerThread(threading.Thread):
         msg = msg.decode('utf-8')
         msg_dict = json.loads(msg)
         return msg_dict['HEAD'], msg_dict['BODY']
+
+    def connect_to_dht(self, request, file_hash, master_ip, master_port):
+        msg = request + ',' + file_hash + ',' + str(self.ip) + ',' + str(master_port)
+        try:
+            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_socket.connect((master_ip, int(master_port)))
+            client_socket.send(msg.encode())
+        except Exception as e:
+            print(e)

@@ -5,7 +5,6 @@ class FileManager:
 
     def __init__(self):
         self.total_block_list = {}
-        self.block_q = queue.Queue()
 
     def read_block_data(self, file_path, index):
         with open(file_path, 'rb') as f:

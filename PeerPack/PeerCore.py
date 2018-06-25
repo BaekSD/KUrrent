@@ -1,6 +1,10 @@
 import os, hashlib, sys
 from PeerPack import KurrentParser
 
+num = 2
+master_ip = "192.168.43.242"
+master_port = 15000 + num
+
 class PeerCore:
     def __init__(self, server):
         self.KUrrentLIST = {}
@@ -77,14 +81,14 @@ class PeerCore:
         f.write(sha.hexdigest() + "\n")
 
         self.KUrrentLIST[sha] = {
-                                    'file': os.path.basename(sharing_file),
-                                    'status': 'complete',
-                                    'dir': os.path.abspath(sharing_file),
-                                    'size': size,
-                                    'hash_table': []
-                                 }
+            'file': os.path.basename(sharing_file),
+            'status': 'complete',
+            'dir': os.path.abspath(sharing_file),
+            'size': size,
+            'hash_table': []
+        }
 
-        for i in range(int((size+8191)/8192)):
+        for i in range(int((size + 8191) / 8192)):
             self.KUrrentLIST[sha]['hash_table'].append(True)
 
         for i in tll:
@@ -96,25 +100,23 @@ class PeerCore:
         for i in tracker_list:
             f.write(i.strip() + "\n")
 
-        f.write(os.path.basename(sharing_file)+'\n')
+        f.write(os.path.basename(sharing_file) + '\n')
         f.write(str(size))
         f.close()
 
-        print(self.KUrrentLIST[sha])
-
-        f = open(file_name, 'rt')
-        #self.add_seeder(tracker_list, f)
-        f.close()
         # We have to do here => put client to dht and put data to database
-
+        block_tuples = self.get_block_tuples(sharing_file, sha.hexdigest())
+        from PeerPack import db
+        db.put_total_blocks(block_tuples)
+        self.server.connect_to_dht('add_peer', sha.hexdigest(), master_ip, master_port)
 
     def get_file_list_recur(self, abs_path, file):
-        if os.path.isfile(abs_path+file):
-            if os.path.basename(abs_path+file).startswith("."):
+        if os.path.isfile(abs_path + file):
+            if os.path.basename(abs_path + file).startswith("."):
                 return None
             return file
-        elif os.path.isdir(abs_path+file):
-            child = os.listdir(abs_path+file)
+        elif os.path.isdir(abs_path + file):
+            child = os.listdir(abs_path + file)
             ret = []
             for i in child:
                 f = self.get_file_list_recur(abs_path, file + os.path.sep + i)
@@ -135,16 +137,17 @@ class PeerCore:
         download_file_name = self.parser.get_file_name(kurrent_file)
 
         self.KUrrentLIST[file_hash] = {
-                                        'file': download_file_name,
-                                        'status': 'downloading',
-                                        'dir': saving_dir,
-                                        'size': size,
-                                        'hash_table': []
-                                        }
+            'file': download_file_name,
+            'status': 'downloading',
+            'dir': saving_dir,
+            'size': size,
+            'hash_table': []
+        }
 
-        for i in range(int((size+8191)/8192)):
+        for i in range(int((size + 8191) / 8192)):
             self.KUrrentLIST[file_hash]['hash_table'].append(False)
 
+        file_path = saving_dir + '/' + download_file_name
         '''
 
         for i in file_list.keys():
@@ -155,12 +158,12 @@ class PeerCore:
                 self.KUrrentLIST[file_hash]['files'][i]['hash_table'].append(False)
         '''
 
-        # We have to do here => Request to DHT and DHT Should insert this peer into hash table and saving_dir should be added real file name
-        # File Manager should write file with real file name and size
+        # Request to DHT
         from PeerPack import db, fm
-        db.put_file_info(file_hash, size, (size/8192) + 1, saving_dir)
-        fm.write_new_file(saving_dir, size)
+        db.put_file_info(file_hash, size, (size / 8192) + 1, file_path)
+        fm.write_new_file(file_path, size)
 
+        self.server.connect_to_dht('get_peers', file_hash, master_ip, master_port)
 
     def get_torrent_table(self):
         torrent_table = []
@@ -168,8 +171,22 @@ class PeerCore:
         for i in self.KUrrentLIST.keys():
             t = [i,
                  self.KUrrentLIST[i]['dir'],
-                 self.KUrrentLIST[i]['status'],
-                 self.get_seeder_num(i)]
+                 self.KUrrentLIST[i]['status']
+                 # , self.get_seeder_num(i)]
+                 ]
             torrent_table.append(t)
 
         return torrent_table
+
+    def get_block_tuples(self, sharing_file, file_hash):
+        tuple_list = []
+        with open(sharing_file, 'rb') as f:
+            i = 0
+            while True:
+                data = f.read(8192)
+                i += 1
+                block_tuple = (file_hash, i)
+                tuple_list.append(block_tuple)
+                if data.__sizeof__() < 8192:
+                    break
+        return tuple_list

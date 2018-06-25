@@ -3,10 +3,11 @@ import random
 
 class ServerPeer(threading.Thread):
 
-    def __init__(self, client_socket, file_hash):
+    def __init__(self, client_socket, file_hash, lock):
         threading.Thread.__init__(self)
         self.client_socket = client_socket
         self.file_hash = file_hash
+        self.lock = lock
         from PeerPack import db
         self.file_path, self.last_index = db.get_file_data(self.file_hash)
 
@@ -64,6 +65,7 @@ class ServerPeer(threading.Thread):
             elif head is 'BLOCK':
                 block_num = msg['FOOT']
                 from PeerPack import fm, db
+
                 fm.write_block_data(self.file_path, block_num)
                 db.put_block_info(self.file_hash, block_num)
 

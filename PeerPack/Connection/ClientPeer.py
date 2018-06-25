@@ -3,9 +3,10 @@ from PeerPack.Model import BlockVO
 import random
 
 class ClientPeer(threading.Thread):
-    def __init__(self, peer):
+    def __init__(self, peer, lock):
         threading.Thread.__init__(self)
         self.peer = peer
+        self.lock = lock
         self.client_socket = self.connect_to_peer()
         from PeerPack import db
         self.file_path, self.last_index = db.get_file_data(self.peer.file_hash)

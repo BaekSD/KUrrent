@@ -61,3 +61,10 @@ class DBManager:
             return block_list
         except Exception as e:
             print(e)
+
+    def put_total_blocks(self, total_blocks):
+        try:
+            sql = "insert into BlockTable(FileHash, BlockNum) values (?, ?)"
+            self.cursor.executemany(sql, total_blocks)  # , None ))
+        except Exception as e:
+            print(e)
