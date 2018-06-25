@@ -77,6 +77,7 @@ class PeerCore:
         f.write(sha.hexdigest() + "\n")
 
         self.KUrrentLIST[sha] = {
+                                    'file': os.path.basename(sharing_file),
                                     'status': 'complete',
                                     'dir': os.path.abspath(sharing_file),
                                     'size': size,
@@ -131,8 +132,10 @@ class PeerCore:
         file_hash = self.parser.get_file_hash(kurrent_file)
         tracker_list = self.parser.parse_tracker_text(tracker_text)
         size = self.parser.get_size(kurrent_file)
+        download_file_name = self.parser.get_file_name(kurrent_file)
 
         self.KUrrentLIST[file_hash] = {
+                                        'file': download_file_name,
                                         'status': 'downloading',
                                         'dir': saving_dir,
                                         'size': size,
