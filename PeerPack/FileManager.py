@@ -14,12 +14,12 @@ class FileManager:
             return block_data
 
     def write_block_data(self, file_path, data, index):
-        with open(file_path, 'wb+') as f:
-            # we have to do here
-            pass
+        with open(file_path, 'r+b') as f:
+            f.seek(8192 * (index - 1))
+            f.write(data)
 
     def write_new_file(self, file_path, file_size):
-        with open(file_path, 'wb') as f:
+        with open(file_path, 'w+b') as f:
             f.seek(file_size-1)
             f.write(b'\0')
 

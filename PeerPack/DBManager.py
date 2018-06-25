@@ -18,17 +18,17 @@ class DBManager:
             print(e)
 
         try:
-            sql = 'CREATE TABLE FileTable(FileHash VARCHAR(64), FileSize Integer, LastIndex Integer, DIR VARCHAR(' \
+            sql = 'CREATE TABLE FileTable(FileHash VARCHAR(64), FileSize Integer, LastIndex Integer, FIlePath VARCHAR(' \
                   '200), PRIMARY KEY(FileHash)) '
             self.cursor.execute(sql)
         except Exception as e:
             print(e)
         self.conn.commit()
 
-    def put_file_info(self, file_hash, file_size, last_index, saving_dir):
+    def put_file_info(self, file_hash, file_size, last_index, file_path):
         try:
-            sql = "insert into FileTable(FileHash, FileSize, LastIndex, DIR) values (?, ?, ?, ?)"
-            self.cursor.execute(sql, (file_hash, file_size, last_index, saving_dir))
+            sql = "insert into FileTable(FileHash, FileSize, LastIndex, FilePath) values (?, ?, ?, ?)"
+            self.cursor.execute(sql, (file_hash, file_size, last_index, file_path))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -43,7 +43,7 @@ class DBManager:
 
     def get_file_data(self, file_hash):
         try:
-            sql = "select DIR, LastIndex from FileTable where FileHash=?"
+            sql = "select FilePath, LastIndex from FileTable where FileHash=?"
             self.cursor.execute(sql, (file_hash, ))
             rows = self.cursor.fetchone()
             return rows[0], rows[1]
