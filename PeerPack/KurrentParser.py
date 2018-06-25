@@ -8,18 +8,18 @@ class Parser:
         return file_info
 
     def get_file_hash(self, kurrent_file):
-        kurrent_file.seek(0)
+        #kurrent_file.seek(0)
         file_info = self.get_file_info(kurrent_file)
         return file_info[0]
 
     def get_tracker_size(self, kurrent_file):
-        kurrent_file.seek(0)
+        #kurrent_file.seek(0)
         file_info = self.get_file_info(kurrent_file)
         tracker_size = file_info[1].split(' ')[-1]
         return tracker_size
 
     def get_tracker_list(self, kurrent_file):
-        kurrent_file.seek(0)
+        #kurrent_file.seek(0)
         file_info = self.get_file_info(kurrent_file)
         tracker_size = self.get_tracker_size(kurrent_file)
         file_hash = file_info[0]
@@ -32,6 +32,12 @@ class Parser:
         tracker_list = tracker_text.split('\n')
         return tracker_list
 
+    def get_size(self, kurrent_file):
+        file_info = self.get_file_info(kurrent_file)
+        #print(file_info)
+        return int(file_info[-1])
+
+    '''
     def get_file_list(self, kurrent_file):
         kurrent_file.seek(0)
         file_list = {}
@@ -47,3 +53,4 @@ class Parser:
         for i in file_list.values():
             size += i
         return size
+    '''

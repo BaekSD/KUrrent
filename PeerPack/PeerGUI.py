@@ -142,7 +142,7 @@ class PeerGUI(QMainWindow):
         toolBtn.move(305, 10)
         toolBtn.setText("...")
 
-        sharingDirLabel = QLabel("Sharing Dir : ")
+        sharingDirLabel = QLabel("Saving Dir : ")
         sharingDirLabel.setFont(QFont("Arial", 13, QFont.Bold))
         sharingDirLabel.setFixedSize(85, 30)
         sharingDirLabel.move(15, 50)
@@ -235,17 +235,13 @@ class PeerGUI(QMainWindow):
         content = f.read().splitlines()
 
         trackernum = -1
-        filenum = -1
 
         for i in content:
             if i.startswith("trackers : "):
                 trackernum = int(i[10:])
-                filenum = -1
-            elif i.startswith("files : "):
-                filenum = int(i[8:])
-                trackernum = -1
-            elif filenum == -1 and trackernum != -1:
+            elif trackernum > 0:
                 self.addTrackerListText.append(i)
+                trackernum -= 1
             else:
                 pass
 
@@ -297,16 +293,16 @@ class PeerGUI(QMainWindow):
         toolBtn.move(305, 10)
         toolBtn.setText("...")
 
-        sharingDirLabel = QLabel("Sharing Dir : ")
+        sharingDirLabel = QLabel("Sharing File : ")
         sharingDirLabel.setFont(QFont("Arial", 13, QFont.Bold))
         sharingDirLabel.setFixedSize(85, 30)
         sharingDirLabel.move(15, 50)
         sharingDirLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
 
-        self.sharingDirText = QLineEdit("")
-        self.sharingDirText.setFont(QFont("Arial", 13, QFont.Bold))
-        self.sharingDirText.setFixedSize(200, 30)
-        self.sharingDirText.move(105, 50)
+        self.sharingFileText = QLineEdit("")
+        self.sharingFileText.setFont(QFont("Arial", 13, QFont.Bold))
+        self.sharingFileText.setFixedSize(200, 30)
+        self.sharingFileText.move(105, 50)
 
         toolBtn2 = QToolButton()
         toolBtn2.setFixedSize(30,30)
@@ -335,7 +331,7 @@ class PeerGUI(QMainWindow):
         cancelBtn.move(265, 330)
 
         toolBtn.clicked.connect(self.set_save_file_name)
-        toolBtn2.clicked.connect(self.set_sharing_dir)
+        toolBtn2.clicked.connect(self.set_sharing_file)
         okBtn.clicked.connect(self.make_torrent_ok)
         cancelBtn.clicked.connect(self.make_torrent_cancel)
 
@@ -344,7 +340,7 @@ class PeerGUI(QMainWindow):
         self.makeDialog.layout().addChildWidget(toolBtn)
 
         self.makeDialog.layout().addChildWidget(sharingDirLabel)
-        self.makeDialog.layout().addChildWidget(self.sharingDirText)
+        self.makeDialog.layout().addChildWidget(self.sharingFileText)
         self.makeDialog.layout().addChildWidget(toolBtn2)
 
         self.makeDialog.layout().addChildWidget(trackerListLabel)
@@ -360,20 +356,29 @@ class PeerGUI(QMainWindow):
         if file is not None and file[0] is not None and file[0] is not "":
             self.fileNameText.setText(file[0])
 
-    def set_sharing_dir(self):
+    def set_sharing_file(self):
+        file = QFileDialog.getOpenFileName(self, "", "", "")
+        if file is not None and file[0] is not None and file[0] is not "":
+            self.sharingFileText.setText(file[0])
+
+        #self.addTrackerListText.setText("")
+
+        '''
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.DirectoryOnly)
         dialog.exec_()
         dir = dialog.selectedFiles()
         if dir is not None and dir[0] is not None and dir[0] is not "":
             self.sharingDirText.setText(dir[0])
+        '''
 
     def make_torrent_ok(self):
         # make torrent file
         fn = self.fileNameText.text()
-        sd = self.sharingDirText.text()
+        sf = self.sharingFileText.text()
+        print(sf)
         tl = self.trackerListText.toPlainText()
-        self.core.make_torrent(fn, sd, tl)
+        self.core.make_torrent(fn, sf, tl)
         self.makeDialog.destroy()
 
     def make_torrent_cancel(self):
