@@ -1,5 +1,6 @@
 import socket, threading, json
 import random
+from PeerPack.Model import BlockVO
 
 class ServerPeer(threading.Thread):
 
@@ -38,7 +39,7 @@ class ServerPeer(threading.Thread):
         self.client_socket.send(msg)
 
     def recv_msg(self, buf_size=10000):
-        from PeerPack import db
+        from PeerPack import fm, db
 
         while True:
             msg = self.client_socket.recv(buf_size)
@@ -64,12 +65,12 @@ class ServerPeer(threading.Thread):
 
             elif head is 'BLOCK':
                 block_num = msg['FOOT']
-                from PeerPack import fm, db
-
-                fm.write_block_data(self.file_path, block_num)
-                db.put_block_info(self.file_hash, block_num)
-
+                block = BlockVO.BlockVO(file_hash=self.file_hash, file_path=self.file_path, block_num=block_num, block_data=body)
+                fm.insert_block(block)
             elif head is 'QUIT':
+                self.lock.aquire()
+                fm.request_write_blocks()
+                self.lock.release()
                 break
 
     def get_status(self):

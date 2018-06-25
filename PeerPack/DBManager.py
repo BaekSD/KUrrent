@@ -6,7 +6,7 @@ class DBManager:
 
     def __init__(self):
         db_file = os.path.join('Files', 'Kurrent.db')
-        self.conn = sqlite3.connect(db_file)
+        self.conn = sqlite3.connect(db_file, check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.create_table()
 
@@ -59,12 +59,5 @@ class DBManager:
             for i in range(rows.__len__()):
                 block_list.append(rows[i][0])
             return block_list
-        except Exception as e:
-            print(e)
-
-    def put_total_blocks(self, total_blocks):
-        try:
-            sql = "insert into BlockTable(FileHash, BlockNum) values (?, ?)"
-            self.cursor.executemany(sql, total_blocks)  # , None ))
         except Exception as e:
             print(e)

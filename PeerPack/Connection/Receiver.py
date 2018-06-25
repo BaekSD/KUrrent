@@ -47,14 +47,15 @@ class ServerThread(threading.Thread):
             client_peer.start()
         self.peers_list += peer_list
 
-    def get_peers(self, peer_dict):
+    def get_peers(self, raw_peer_list):
         peer_list = []
-        for key in peer_dict:
-            address_list = peer_dict[key]
-            for address in address_list:
-                address_arr = address.split(':')
+        for key in raw_peer_list:
+            file_hash = hex(int(key))[2:]
+            for i in range(raw_peer_list[key].__len__()):
+                address_arr = raw_peer_list[key][i].split(':')
                 # IP, PORT, File Hash
-                peer = PeerVO.PeerVO(address_arr[0], address_arr[1], key)
+
+                peer = PeerVO.PeerVO(ip=address_arr[0], port=int(address_arr[1]), file_hash=file_hash)
                 peer_list.append(peer)
         return peer_list
 
@@ -65,7 +66,7 @@ class ServerThread(threading.Thread):
         return msg_dict['HEAD'], msg_dict['BODY']
 
     def connect_to_dht(self, request, file_hash, master_ip, master_port):
-        msg = request + ',' + file_hash + ',' + str(self.ip) + ',' + str(master_port)
+        msg = request + ',' + file_hash + ',' + str(self.ip) + ',' + str(self.port)
         try:
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client_socket.connect((master_ip, int(master_port)))

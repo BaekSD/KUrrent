@@ -1,7 +1,7 @@
 import os, hashlib, sys
 from PeerPack import KurrentParser
 
-num = 2
+num = 10
 master_ip = "192.168.43.242"
 master_port = 15000 + num
 

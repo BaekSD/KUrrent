@@ -18,7 +18,7 @@ class ClientPeer(threading.Thread):
 
     def run(self):
         status, body = self.get_status()
-        self.send_status()
+        self.send_status(status, body)
         if status is not 'COMPLETE_PHASE':
             self.recv_msg()
 
@@ -28,7 +28,7 @@ class ClientPeer(threading.Thread):
 
     def get_status(self):
         from PeerPack import db
-        block_list = db.get_blocks(self.file_hash)
+        block_list = db.get_blocks(self.peer.file_hash)
 
         block_ratio = block_list.__len__() / self.last_index
         body = 'EMPTY'
@@ -62,7 +62,7 @@ class ClientPeer(threading.Thread):
         self.client_socket.send(msg)
 
     def recv_msg(self, buf_size=10000):
-        from PeerPack import db
+        from PeerPack import fm, db
 
         while True:
             msg = self.client_socket.recv(buf_size)
@@ -72,9 +72,10 @@ class ClientPeer(threading.Thread):
 
             if head is 'BLOCK':
                 block_num = msg['FOOT']
-                from PeerPack import fm, db
-                fm.write_block_data(self.file_path, block_num)
-                db.put_block_info(self.peer.file_hash, block_num)
+                block = BlockVO.BlockVO(file_hash=self.peer.file_hash, file_path=self.file_path, block_num=block_num,
+                                        block_data=body)
+
+                fm.insert_block(block)
 
                 msg_dict = self.create_dict('ASK', 'ASK')
                 self.send_msg(msg_dict)
@@ -87,6 +88,8 @@ class ClientPeer(threading.Thread):
             elif head is 'QUIT':
                 msg_dict = self.create_dict('QUIT', 'QUIT')
                 self.send_msg(msg_dict)
+
+                fm.request_write_blocks()
                 break
 
     def send_block(self, my_block_list, request_block_list):

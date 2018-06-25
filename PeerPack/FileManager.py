@@ -6,21 +6,38 @@ class FileManager:
     def __init__(self):
         self.total_block_list = {}
 
+    def insert_block(self, block):
+        try:
+            self.total_block_list[block.file_hash].append[block]
+        except Exception as e:
+            self.total_block_list[block.file_hash] = [block]
+
     def read_block_data(self, file_path, index):
         with open(file_path, 'rb') as f:
             f.seek(8192*(index-1))
             block_data = f.read(8192)
             return block_data
 
-    def write_block_data(self, file_path, data, index):
-        with open(file_path, 'r+b') as f:
-            f.seek(8192 * (index - 1))
-            f.write(data)
+    def write_block_data(self, block_list):
+        from PeerPack import db
+        for block in block_list:
+            with open(block.file_path, 'r+b') as f:
+                f.seek(8192 * (block.block_num - 1))
+                f.write(block.block_data)
+                print(block.file_path, str(block.block_num))
+                db.put_block_info(block.file_hash, block.block_num)
 
     def write_new_file(self, file_path, file_size):
         with open(file_path, 'w+b') as f:
             f.seek(file_size-1)
             f.write(b'\0')
+
+    def request_write_blocks(self):
+        futures = [self.write_block_data(self.total_block_list[file_hash]) for file_hash in self.total_block_list]
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(asyncio.wait(futures))
+        loop.close()
+
 
     '''def insert_block(self, block):
         self.block_q.put(block)
