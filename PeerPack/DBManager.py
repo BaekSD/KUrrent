@@ -28,7 +28,7 @@ class DBManager:
     def put_file_info(self, file_hash, file_size, last_index, file_path):
         try:
             sql = "insert into FileTable(FileHash, FileSize, LastIndex, FilePath) values (?, ?, ?, ?)"
-            self.cursor.execute(sql, (file_hash, file_size, last_index, file_path))
+            self.cursor.execute(sql, (file_hash, file_size, int(last_index), file_path))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -37,6 +37,14 @@ class DBManager:
         try:
             sql = "insert into BlockTable(FileHash, BlockNum) values (?, ?)"
             self.cursor.execute(sql, (file_hash, block_num))
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
+    def put_total_blocks(self, total_blocks):
+        try:
+            sql = "insert into BlockTable(FileHash, BlockNum) values (?, ?)"
+            self.cursor.executemany(sql, total_blocks)  # , None ))
             self.conn.commit()
         except Exception as e:
             print(e)

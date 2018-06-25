@@ -108,6 +108,7 @@ class PeerCore:
         block_tuples = self.get_block_tuples(sharing_file, sha.hexdigest())
         from PeerPack import db
         db.put_total_blocks(block_tuples)
+        db.put_file_info(sha.hexdigest(), size, (size / 8192) + 1, sharing_file)
         self.server.connect_to_dht('add_peer', sha.hexdigest(), master_ip, master_port)
 
     def get_file_list_recur(self, abs_path, file):

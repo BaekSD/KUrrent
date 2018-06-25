@@ -5,7 +5,7 @@ from PeerPack.Connection import Receiver
 from PyQt5.QtWidgets import *
 import sys
 
-ip = '192.168.43.197'
+ip = '172.16.29.203'
 port = 7777
 
 db = DBManager.DBManager()
