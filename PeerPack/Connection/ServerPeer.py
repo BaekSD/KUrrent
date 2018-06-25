@@ -8,7 +8,7 @@ class ServerPeer(threading.Thread):
         self.client_socket = client_socket
         self.file_hash = file_hash
         from PeerPack import db
-        self.file_dir, self.last_index = db.get_file_data(self.file_hash)
+        self.file_path, self.last_index = db.get_file_data(self.file_hash)
 
     def run(self):
         self.recv_msg()
@@ -64,7 +64,7 @@ class ServerPeer(threading.Thread):
             elif head is 'BLOCK':
                 block_num = msg['FOOT']
                 from PeerPack import fm, db
-                fm.write_block_data(self.file_dir, block_num)
+                fm.write_block_data(self.file_path, block_num)
                 db.put_block_info(self.file_hash, block_num)
 
             elif head is 'QUIT':
@@ -104,7 +104,7 @@ class ServerPeer(threading.Thread):
 
         for i in range(send_block_list.__len__()):
             from PeerPack import fm
-            block_dict = self.create_dict('BLOCK', fm.read_block_data(self.file_dir, send_block_list[i]), send_block_list[i])
+            block_dict = self.create_dict('BLOCK', fm.read_block_data(self.file_path, send_block_list[i]), send_block_list[i])
             self.send_msg(block_dict)
 
     def choice_block(self, send_block_list):

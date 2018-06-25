@@ -8,7 +8,7 @@ class ClientPeer(threading.Thread):
         self.peer = peer
         self.client_socket = self.connect_to_peer()
         from PeerPack import db
-        self.file_dir, self.last_index = db.get_file_data(self.peer.file_hash)
+        self.file_path, self.last_index = db.get_file_data(self.peer.file_hash)
 
     def connect_to_peer(self):
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -72,7 +72,7 @@ class ClientPeer(threading.Thread):
             if head is 'BLOCK':
                 block_num = msg['FOOT']
                 from PeerPack import fm, db
-                fm.write_block_data(self.file_dir, block_num)
+                fm.write_block_data(self.file_path, block_num)
                 db.put_block_info(self.peer.file_hash, block_num)
 
                 msg_dict = self.create_dict('ASK', 'ASK')
@@ -98,7 +98,7 @@ class ClientPeer(threading.Thread):
 
         for i in range(send_block_list.__len__()):
             from PeerPack import fm
-            block_dict = self.create_dict('BLOCK', fm.read_block_data(self.file_dir, send_block_list[i]), send_block_list[i])
+            block_dict = self.create_dict('BLOCK', fm.read_block_data(self.file_path, send_block_list[i]), send_block_list[i])
             self.send_msg(block_dict)
 
     def choice_block(self, request_block_list):

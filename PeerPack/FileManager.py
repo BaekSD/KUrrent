@@ -7,19 +7,19 @@ class FileManager:
         self.total_block_list = {}
         self.block_q = queue.Queue()
 
-    def read_block_data(self, file_dir, index):
-        with open(file_dir, 'rb') as f:
+    def read_block_data(self, file_path, index):
+        with open(file_path, 'rb') as f:
             f.seek(8192*(index-1))
             block_data = f.read(8192)
             return block_data
 
-    def write_block_data(self, file_dir, data, index):
-        with open(file_dir, 'wb+') as f:
+    def write_block_data(self, file_path, data, index):
+        with open(file_path, 'wb+') as f:
             # we have to do here
             pass
 
-    def write_new_file(self, file_dir, file_size):
-        with open(file_dir, 'wb') as f:
+    def write_new_file(self, file_path, file_size):
+        with open(file_path, 'wb') as f:
             f.seek(file_size-1)
             f.write(b'\0')
 
