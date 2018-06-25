@@ -1,6 +1,6 @@
-import math, random, threading, socket, time, json
+import math, random, threading, socket, time, json, sys
 
-num = 0
+num = 10
 
 '''
 msg code explanation
@@ -376,113 +376,163 @@ class Tracker():
                     self.dht_table[i][2] = ip+':'+port
         self.request_666(ip, port, min, max, count)
 
+    def send_peers(self, ip, port, hash):
+        # send the peers to ip & port
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((ip, int(port)))
+            peer_dict = {
+                'HEAD': 'DHT',
+                'BODY': {}
+            }
+            peer_list = []
+            if hash in self.hash_table.keys():
+                for i in self.hash_table[hash]:
+                    if i == ip+':'+str(port):
+                        continue
+                    peer_list.append(i)
+            peer_dict['BODY'] = {hash: peer_list}
+            msg = json.dumps(peer_dict)
+            msg = msg.encode('utf-8')
+            s.send(msg)
+            print('sended')
+
+    def request_get_peers(self, bypass_ip, bypass_port, ip, port, hash):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((bypass_ip, int(bypass_port)))
+            bypass_msg = 'get_peers,' + hash + ',' + ip + ',' + port
+            s.send(bypass_msg.encode())
+            print('bypassed')
+
     def response_get_peers(self, msg):
         hash = int(msg[1], 16)
         ip = msg[2]
         port = msg[3]
 
-        if self.min <= self.max and self.min <= hash and hash <= self.max:
-            # send the peers to ip & port
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((ip, int(port)))
-                peer_dict = {
-                    'HEAD': 'DHT',
-                    'BODY': []
-                }
-                if hash in self.hash_table.keys():
-                    for i in self.hash_table[hash]:
-                        peer_dict['BODY'].append(i)
-                msg = json.dumps(peer_dict)
-                msg = msg.encode('utf-8')
-                s.send(msg.encode())
-        elif self.min > self.max and ((self.min <= hash and hash < self.key_range) or (0 <= hash and hash <= self.max)):
-            # send the peers to ip & port
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((ip, int(port)))
-                peer_dict = {
-                    'HEAD': 'DHT',
-                    'BODY': []
-                }
-                if hash in self.hash_table.keys():
-                    for i in self.hash_table[hash]:
-                        peer_dict['BODY'].append(i)
-                msg = json.dumps(peer_dict)
-                msg = msg.encode('utf-8')
-                s.send(msg.encode())
+        print(msg)
+
+        if self.min <= self.max:
+            if self.min <= hash and hash <= self.max:
+                self.send_peers(ip, port, hash)
+            else:
+                # bypass this msg to another tracker
+                for i in range(self.bit_len):
+                    low = (self.num + int(math.pow(2,i))) % self.key_range
+                    high = (self.num + int(math.pow(2,i+1))) % self.key_range
+                    if low <= high:
+                        if low <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_get_peers(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                    else:
+                        if low <= hash and hash < self.key_range:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_get_peers(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                        elif 0 <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_get_peers(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
         else:
-            # bypass the request to other tracker
-            for i in range(self.bit_len):
-                low = (self.num + int(math.pow(2, i))) % self.key_range
-                high = (self.num + int(math.pow(2, i + 1))) % self.key_range
-                if low <= high:
-                    if low <= num and num < high:
-                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                            s.connect((bypass_ip, int(bypass_port)))
-                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
-                            s.send(bypass_msg.encode())
-                        break
-                else:
-                    if low <= num and num < self.key_range:
-                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                            s.connect((bypass_ip, int(bypass_port)))
-                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
-                            s.send(bypass_msg.encode())
-                        break
-                    elif 0 <= num and num < high:
-                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                            s.connect((bypass_ip, int(bypass_port)))
-                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
-                            s.send(bypass_msg.encode())
-                        break
+            if self.min <= hash and hash < self.key_range:
+                self.send_peers(ip, port, hash)
+            elif 0 <= hash and hash <= self.max:
+                self.send_peers(ip, port, hash)
+            else:
+                # bypass this msg to another tracker
+                for i in range(self.bit_len):
+                    low = (self.num + int(math.pow(2,i))) % self.key_range
+                    high = (self.num + int(math.pow(2,i+1))) % self.key_range
+                    if low <= high:
+                        if low <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_get_peers(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                    else:
+                        if low <= hash and hash < self.key_range:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_get_peers(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                        elif 0 <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_get_peers(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+
+    def request_add_peer(self, bypass_ip, bypass_port, ip, port, hash):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((bypass_ip, int(bypass_port)))
+            bypass_msg = 'add_peer,' + hash + ',' + ip + ',' + port
+            s.send(bypass_msg.encode())
+        print('bypassed')
 
     def response_add_peer(self, msg):
         hash = int(msg[1], 16)
         ip = msg[2]
         port = msg[3]
 
-        if self.min <= self.max and self.min <= hash and hash <= self.max:
-            # add the peer
-            if hash in self.hash_table.keys():
-                self.hash_table[hash].append(ip+':'+port)
-            else:
-                self.hash_table[hash] = [ip+':'+port]
-        elif self.min > self.max and ((self.min <= hash and hash < self.key_range) or (0 <= hash and hash <= self.max)):
-            # add the peer
-            if hash in self.hash_table.keys():
-                self.hash_table[hash].append(ip+':'+port)
-            else:
-                self.hash_table[hash] = [ip+':'+port]
-        else:
-            # bypass the request to other tracker
-            for i in range(self.bit_len):
-                low = (self.num + int(math.pow(2, i))) % self.key_range
-                high = (self.num + int(math.pow(2, i + 1))) % self.key_range
-                if low <= high:
-                    if low <= num and num < high:
-                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                            s.connect((bypass_ip, int(bypass_port)))
-                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
-                            s.send(bypass_msg.encode())
-                        break
+        print(msg)
+        print(hash)
+
+        if self.min <= self.max:
+            if self.min <= hash and hash <= self.max:
+                print("added")
+                # add the peer
+                if hash in self.hash_table.keys():
+                    self.hash_table[hash].append(ip+':'+port)
                 else:
-                    if low <= num and num < self.key_range:
-                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                            s.connect((bypass_ip, int(bypass_port)))
-                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
-                            s.send(bypass_msg.encode())
-                        break
-                    elif 0 <= num and num < high:
-                        bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                            s.connect((bypass_ip, int(bypass_port)))
-                            bypass_msg = msg[0] + ',' + msg[1] + ',' + msg[2] + ',' + msg[3]
-                            s.send(bypass_msg.encode())
-                        break
+                    self.hash_table[hash] = [ip+':'+port]
+            else:
+                # bypass this msg to another tracker
+                for i in range(self.bit_len):
+                    low = (self.num + int(math.pow(2,i))) % self.key_range
+                    high = (self.num + int(math.pow(2,i+1))) % self.key_range
+                    if low <= high:
+                        if low <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_add_peer(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                    else:
+                        if low <= hash and hash < self.key_range:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_add_peer(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                        elif 0 <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_add_peer(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+        else:
+            if self.min <= hash and hash < self.key_range:
+                print("added")
+                # add the peer
+                if hash in self.hash_table.keys():
+                    self.hash_table[hash].append(ip+':'+port)
+                else:
+                    self.hash_table[hash] = [ip+':'+port]
+            elif 0 <= hash and hash <= self.max:
+                print("added")
+                # add the peer
+                if hash in self.hash_table.keys():
+                    self.hash_table[hash].append(ip+':'+port)
+                else:
+                    self.hash_table[hash] = [ip+':'+port]
+            else:
+                # bypass this msg to another tracker
+                for i in range(self.bit_len):
+                    low = (self.num + int(math.pow(2,i))) % self.key_range
+                    high = (self.num + int(math.pow(2,i+1))) % self.key_range
+                    if low <= high:
+                        if low <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_add_peer(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                    else:
+                        if low <= hash and hash < self.key_range:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_add_peer(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
+                        elif 0 <= hash and hash < high:
+                            bypass_ip, bypass_port = self.dht_table[i][2].split(sep=':')
+                            self.request_add_peer(bypass_ip, bypass_port, ip, port, msg[1])
+                            break
 
     def run_init(self):
         self.joining_sem.acquire()
@@ -554,12 +604,19 @@ class Tracker():
         self.close_sock = True
 
 if __name__ == "__main__":
-    master_tracker = Tracker(ip='127.0.0.1', port=15000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=True)
-    tracker1 = Tracker(ip='127.0.0.1', port=16000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=False)
-    tracker2 = Tracker(ip='127.0.0.1', port=17000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=False)
-    tracker3 = Tracker(ip='127.0.0.1', port=18000 + num, master_ip='127.0.0.1', master_port=15000 + num, master_tracker=False)
+    ip = str(socket.gethostbyname(socket.getfqdn()))
 
-    while not tracker3.init_finished:
+    master_tracker = Tracker(ip=ip, port=15000 + num, master_ip=ip, master_port=15000 + num, master_tracker=True)
+    tracker1 = Tracker(ip=ip, port=16000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
+    tracker2 = Tracker(ip=ip, port=17000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
+    tracker3 = Tracker(ip=ip, port=18000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
+    tracker4 = Tracker(ip=ip, port=19000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
+    tracker5 = Tracker(ip=ip, port=20000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
+    tracker6 = Tracker(ip=ip, port=21000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
+    tracker7 = Tracker(ip=ip, port=22000 + num, master_ip=ip, master_port=15000 + num, master_tracker=False)
+
+    while not (tracker1.init_finished and tracker2.init_finished and tracker3.init_finished and
+               tracker4.init_finished and tracker5.init_finished and tracker6.init_finished and tracker7.init_finished):
         pass
     #time.sleep(1)
 
@@ -568,6 +625,30 @@ if __name__ == "__main__":
     tracker1.print_all()
     tracker2.print_all()
     tracker3.print_all()
+    tracker4.print_all()
+    tracker5.print_all()
+    tracker6.print_all()
+    tracker7.print_all()
+
+
+    time.sleep(1)
+
+    hash = '365ec63a43faa5b2ce109561b17e3ca200586b55a0d2ef94bc7e869ba4d69d92'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((ip, 15000+num))
+        msg = 'add_peer,'+hash+','+ip+',15900'
+        s.send(msg.encode())
+
+    time.sleep(3)
+
+    hash = '365ec63a43faa5b2ce109561b17e3ca200586b55a0d2ef94bc7e869ba4d69d92'
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((ip, 15000 + num))
+        msg = 'get_peers,' + hash + ',' + ip + ',15900'
+        s.send(msg.encode())
+
+
+    time.sleep(10000)
 '''
     master_tracker.close()
     tracker1.close()
