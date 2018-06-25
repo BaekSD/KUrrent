@@ -1,4 +1,4 @@
-import os, hashlib
+import os, hashlib, sys
 from PeerPack import KurrentParser
 
 class PeerCore:
@@ -95,6 +95,7 @@ class PeerCore:
             size = os.path.getsize(sharing_dir + i)
             total_size += size
             f.write(str(size) + "\n")
+            self.KUrrentLIST[sha]['files'][i] = {}
             self.KUrrentLIST[sha]['files'][i]['hash_table'] = []
             self.KUrrentLIST[sha]['files'][i]['size'] = size
             for j in range(int((size+1023)/1024)):
@@ -103,7 +104,7 @@ class PeerCore:
         f.close()
 
         f = open(file_name, 'rt')
-        self.add_seeder(tracker_list, f)
+        #self.add_seeder(tracker_list, f)
         f.close()
 
         self.KUrrentLIST[sha]['size'] = total_size
@@ -130,13 +131,13 @@ class PeerCore:
             return ret
 
     def add_torrent(self, file_name, saving_dir, tracker_text):
-        #kurrent_file = open(file_name, 'rt', encoding='utf-8')
-        file_hash = self.parser.get_file_hash(file_name)
+        kurrent_file = open(file_name, 'rt', encoding='utf-8')
+        file_hash = self.parser.get_file_hash(kurrent_file)
         tracker_list = self.parser.parse_tracker_text(tracker_text)
-        file_list = self.parser.get_file_list(file_name)
-        total_size = self.parser.get_total_size(file_name)
+        file_list = self.parser.get_file_list(kurrent_file)
+        total_size = self.parser.get_total_size(kurrent_file)
 
-        self.add_download_list(file_hash, tracker_list)
+        #self.add_download_list(file_hash, tracker_list)
 
         self.KUrrentLIST[file_hash] = {'status': 'downloading',
                                  'dir':saving_dir,
@@ -144,6 +145,7 @@ class PeerCore:
                                  'files': {}}
 
         for i in file_list.keys():
+            self.KUrrentLIST[file_hash]['files'][i] = {}
             self.KUrrentLIST[file_hash]['files'][i]['hash_table'] = []
             self.KUrrentLIST[file_hash]['files'][i]['size'] = int(file_list[i])
             for j in range(int((int(file_list[i])+1023)/1024)):
