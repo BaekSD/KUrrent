@@ -1,6 +1,6 @@
 import threading
 import socket, json
-from PeerPack.Connection import PeerSocket, ClientPeer, ServerPeer
+from PeerPack.Connection import ClientPeer, ServerPeer
 from PeerPack.Model import PeerVO
 
 
@@ -39,7 +39,6 @@ class ServerThread(threading.Thread):
                 print('Error')
             # Receive {file_hash:peer_list} from DHT(Master Peer)
 
-            # Start PeerSocket Thread to transfer File Block
 
     def request_to_peer(self, peer_list):
         for peer in peer_list:
