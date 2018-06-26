@@ -5,8 +5,8 @@ from PeerPack.Connection import Receiver
 from PyQt5.QtWidgets import *
 import sys
 
-ip = '192.168.43.197'
-port = 7777
+ip = '192.168.43.242'
+port = 8889
 
 server = Receiver.ServerThread(ip, port)
 db = DBManager.DBManager()

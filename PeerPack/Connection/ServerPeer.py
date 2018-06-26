@@ -40,14 +40,14 @@ class ServerPeer(threading.Thread):
         self.client_socket.send(msg)
         print('send=>'+str(msg) + str(msg.__sizeof__()))
 
-    def recv_msg(self, buf_size=10000):
+    def recv_msg(self, buf_size=20000):
         from PeerPack import fm, db
         while True:
             try:
                 msg = self.client_socket.recv(buf_size)
                 print('Receive'+str(msg))
 
-                head, body = self.decode_msg(msg)
+                head, body, block_num = self.decode_msg(msg)
 
                 my_block_list = db.get_blocks(self.file_hash)
 
@@ -118,7 +118,7 @@ class ServerPeer(threading.Thread):
             str_data = hex_data.decode('utf-8')
             block_dict = self.create_dict('BLOCK', str_data, int(send_block_list[i]))
             self.send_msg(block_dict)
-            time.sleep(1)
+            time.sleep(0.5)
 
         finish_dict = self.create_dict('FINISH', 'FINISH')
         self.send_msg(finish_dict)
@@ -137,4 +137,7 @@ class ServerPeer(threading.Thread):
     def decode_msg(self, msg):
         msg = msg.decode('utf-8')
         file_dict = json.loads(msg)
-        return file_dict['HEAD'], file_dict['BODY']
+        block_num = -1
+        if file_dict['HEAD'] == 'BLOCK':
+            block_num = file_dict['FOOT']
+        return file_dict['HEAD'], file_dict['BODY'], block_num

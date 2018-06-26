@@ -1,6 +1,6 @@
 import math, random, threading, socket, time, json, sys
 
-num = 10
+num = 0
 
 '''
 msg code explanation
@@ -604,7 +604,7 @@ class Tracker():
         self.close_sock = True
 
 if __name__ == "__main__":
-    ip = '192.168.43.197'
+    ip = '192.168.43.242'
     #ip = str(socket.gethostbyname(socket.getfqdn()))
     #print(ip)
     master_tracker = Tracker(ip=ip, port=15000 + num, master_ip=ip, master_port=15000 + num, master_tracker=True)

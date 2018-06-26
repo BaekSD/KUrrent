@@ -1,6 +1,6 @@
 import socket, threading, json, binascii
 from PeerPack.Model import BlockVO
-import random
+import random, time
 
 class ClientPeer(threading.Thread):
     def __init__(self, peer):
@@ -134,16 +134,18 @@ class ClientPeer(threading.Thread):
             str_data = hex_data.decode('utf-8')
             block_dict = self.create_dict('BLOCK', str_data, send_block_list[i])
             self.send_msg(block_dict)
+            time.sleep(0.5)
 
-    def choice_block(self, request_block_list):
-        request_list = []
+    def choice_block(self, send_block_list):
+        send_list = []
         try:
             for i in range(10):
-                data = request_block_list.pop(random.choice(request_block_list))
-                request_list.append(data)
+                block_num = random.choice(send_block_list)
+                send_list.append(block_num)
+                send_block_list.remove(block_num)
         except Exception as e:
             print(e)
-        return request_list
+        return send_list
 
     def decode_msg(self, msg):
         msg = msg.decode('utf-8')
