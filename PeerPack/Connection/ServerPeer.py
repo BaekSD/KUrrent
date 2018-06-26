@@ -19,7 +19,7 @@ class ServerPeer(threading.Thread, peer_module):
         from PeerPack import fm, db, core
         while True:
             try:
-                msg = self.get_msg(20000)
+                msg = self.get_msg(00000)
                 print('Receive' + str(msg))
 
                 head, body, block_num = self.decode_msg(msg)

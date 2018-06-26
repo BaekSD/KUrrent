@@ -11,7 +11,6 @@ class ClientPeer(threading.Thread, peer_module):
 
     def connect_to_peer(self, peer):
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.settimeout(None)
         client_socket.connect((peer.ip, peer.port))
         return client_socket
 
@@ -22,6 +21,7 @@ class ClientPeer(threading.Thread, peer_module):
         if status != 'COMPLETE_PHASE':
             self.recv_msg()
         else:
+            msg = self.get_msg(20000)
             msg_dict = self.create_dict('QUIT', 'QUIT')
             self.send_msg(msg_dict)
 

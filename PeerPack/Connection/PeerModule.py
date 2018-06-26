@@ -1,12 +1,11 @@
 import random, json, binascii, time
-
+from PeerPack import DBManager
 class PeerModule:
     def __init__(self, sock, file_hash):#, last_index, file_path):
         self.sock = sock
         self.file_hash = file_hash
-
-        from PeerPack import db
-        self.file_path, self.last_index = db.get_file_data(self.file_hash)
+        self.db = DBManager.DBManager()
+        self.file_path, self.last_index = self.db.get_file_data(self.file_hash)
 
     def choice_block(self, send_block_list):
         send_list = []
@@ -37,8 +36,7 @@ class PeerModule:
         return file_dict['HEAD'], file_dict['BODY'], block_num
 
     def get_status(self):
-        from PeerPack import db
-        block_list = db.get_blocks(self.file_hash)
+        block_list = self.db.get_blocks(self.file_hash)
 
         block_ratio = block_list.__len__() / self.last_index
         body = 'EMPTY'
@@ -68,8 +66,7 @@ class PeerModule:
         return msg
 
     def get_needed_blocks(self):
-        from PeerPack import db
-        block_list = db.get_blocks(self.file_hash)
+        block_list = self.db.get_blocks(self.file_hash)
         request_list = []
         for i in range(self.last_index):
             if not block_list.__contains__(i + 1):
@@ -95,6 +92,7 @@ class PeerModule:
             str_data = hex_data.decode('utf-8')
             block_dict = self.create_dict('BLOCK', str_data, int(send_block_list[i]))
             self.send_msg(block_dict)
+
 
         finish_dict = self.create_dict('FINISH', 'FINISH')
         self.send_msg(finish_dict)

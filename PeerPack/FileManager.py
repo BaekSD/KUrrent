@@ -15,15 +15,15 @@ class FileManager:
 
     def read_block_data(self, file_path, index):
         with open(file_path, 'rb') as f:
-            f.seek(8192*(index-1))
-            block_data = f.read(8192)
+            f.seek(512*(index-1))
+            block_data = f.read(512)
             return block_data
 
     async def write_block_data(self, block_list):
         from PeerPack import db
         for block in block_list:
             with open(block.file_path, 'r+b') as f:
-                f.seek(8192 * (block.block_num - 1))
+                f.seek(512 * (block.block_num - 1))
                 f.write(block.block_data)
                 print(block.file_path, str(block.block_num))
                 db.put_block_info(block.file_hash, block.block_num)

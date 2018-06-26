@@ -85,7 +85,7 @@ class PeerCore:
             'hash_table': []
         }
 
-        for i in range(int((size + 8191) / 8192)):
+        for i in range(int((size + 511) / 512)):
             self.KUrrentLIST[file_hash]['hash_table'].append(True)
 
         for i in tll:
@@ -106,7 +106,7 @@ class PeerCore:
 
         from PeerPack import db
         db.put_total_blocks(block_tuples)
-        db.put_file_info(file_hash, size, (size / 8192) + 1, sharing_file)
+        db.put_file_info(file_hash, size, (size / 512) + 1, sharing_file)
 
         try:
             for tracker in tracker_list:
@@ -152,7 +152,7 @@ class PeerCore:
             'hash_table': []
         }
 
-        for i in range(int((size + 8191) / 8192)):
+        for i in range(int((size + 511) / 512)):
             self.KUrrentLIST[file_hash]['hash_table'].append(False)
 
         file_path = saving_dir + '/' + download_file_name
@@ -168,7 +168,7 @@ class PeerCore:
 
         # Request to DHT
         from PeerPack import db, fm
-        db.put_file_info(file_hash, size, (size / 8192) + 1, file_path)
+        db.put_file_info(file_hash, size, (size / 512) + 1, file_path)
         fm.write_new_file(file_path, size)
 
         try:
@@ -199,10 +199,10 @@ class PeerCore:
         with open(sharing_file, 'rb') as f:
             i = 0
             while True:
-                data = f.read(8192)
+                data = f.read(512)
                 i += 1
                 block_tuple = (file_hash, i)
                 tuple_list.append(block_tuple)
-                if data.__sizeof__() < 8192:
+                if data.__sizeof__() < 512:
                     break
         return tuple_list
