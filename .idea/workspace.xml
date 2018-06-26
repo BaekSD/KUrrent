@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c0c50eed-a2c5-4e58-8921-970ae8816550" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/KUrrent.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KUrrent.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/Connection/Receiver.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/Connection/Receiver.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/FileManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/FileManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/PeerCore.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/PeerCore.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/PeerPack/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TrackerPack/DHT_Tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/TrackerPack/DHT_Tracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,15 +14,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/KUrrent$DHTPeer.coverage" NAME="DHTPeer Coverage Results" MODIFIED="1530000992600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PeerPack" />
-    <SUITE FILE_PATH="coverage/KUrrent$main.coverage" NAME="main Coverage Results" MODIFIED="1530001096247" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PeerPack" />
+    <SUITE FILE_PATH="coverage/KUrrent$DHTPeer.coverage" NAME="DHTPeer Coverage Results" MODIFIED="1530004074592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PeerPack" />
+    <SUITE FILE_PATH="coverage/KUrrent$main.coverage" NAME="main Coverage Results" MODIFIED="1530004207016" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PeerPack" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="ServerPeer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="59">
+            <state relative-caret-position="256">
               <caret line="120" column="26" selection-start-line="120" selection-start-column="26" selection-end-line="120" selection-end-column="26" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
@@ -41,8 +34,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PeerPack/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="26">
-              <caret line="12" column="16" lean-forward="true" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
+            <state relative-caret-position="15">
+              <caret line="1" column="16" selection-start-line="1" selection-start-column="16" selection-end-line="1" selection-end-column="16" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -53,7 +46,7 @@
       <file leaf-file-name="PeerCore.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2146">
+            <state relative-caret-position="-1402">
               <caret line="22" column="32" lean-forward="true" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
             </state>
           </provider>
@@ -125,7 +118,7 @@
       <file leaf-file-name="ClientPeer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
+            <state relative-caret-position="11">
               <caret line="136" column="26" selection-start-line="136" selection-start-column="26" selection-end-line="136" selection-end-column="26" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
@@ -205,13 +198,13 @@
         <option value="$PROJECT_DIR$/PeerPack/Model/BlockVO.py" />
         <option value="$PROJECT_DIR$/PeerPack/DBManager.py" />
         <option value="$PROJECT_DIR$/PeerPack/test.kurrent" />
-        <option value="$PROJECT_DIR$/PeerPack/main.py" />
         <option value="$USER_HOME$/Desktop/asyncio_test.py" />
         <option value="$PROJECT_DIR$/PeerPack/FileManager.py" />
         <option value="$PROJECT_DIR$/TrackerPack/DHT_Tracker.py" />
         <option value="$PROJECT_DIR$/PeerPack/Connection/Receiver.py" />
         <option value="$PROJECT_DIR$/PeerPack/__init__.py" />
         <option value="$PROJECT_DIR$/PeerPack/PeerCore.py" />
+        <option value="$PROJECT_DIR$/PeerPack/main.py" />
         <option value="$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py" />
         <option value="$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py" />
       </list>
@@ -489,7 +482,14 @@
       <option name="project" value="LOCAL" />
       <updated>1529943409566</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="final commit?">
+      <created>1530001977551</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1530001977551</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -498,11 +498,11 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50864863" side_tool="true" weight="0.4" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49027026" visible="true" weight="1.0" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49027026" visible="true" weight="0.37434554" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.48378378" weight="0.23473054" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.32934132" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15416667" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15416667" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="right" id="Database" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49567568" weight="0.32934132" />
@@ -547,7 +547,8 @@
     <MESSAGE value="change the filename from DHTPeer.py to DHT_Tracker.py" />
     <MESSAGE value="add_peer function added" />
     <MESSAGE value="Send and Receive byte(block_data) and lock Fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Send and Receive byte(block_data) and lock Fixed" />
+    <MESSAGE value="final commit?" />
+    <option name="LAST_COMMIT_MESSAGE" value="final commit?" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -731,16 +732,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26">
-          <caret line="12" column="16" lean-forward="true" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/DBManager.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="134">
@@ -765,13 +756,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2146">
-          <caret line="22" column="32" lean-forward="true" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/Connection/Receiver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -782,9 +766,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1402">
+          <caret line="22" column="32" lean-forward="true" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="16" selection-start-line="1" selection-start-column="16" selection-end-line="1" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="59">
+        <state relative-caret-position="256">
           <caret line="120" column="26" selection-start-line="120" selection-start-column="26" selection-end-line="120" selection-end-column="26" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
@@ -794,7 +795,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
+        <state relative-caret-position="11">
           <caret line="136" column="26" selection-start-line="136" selection-start-column="26" selection-end-line="136" selection-end-column="26" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />

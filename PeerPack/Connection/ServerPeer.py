@@ -118,7 +118,7 @@ class ServerPeer(threading.Thread):
             str_data = hex_data.decode('utf-8')
             block_dict = self.create_dict('BLOCK', str_data, int(send_block_list[i]))
             self.send_msg(block_dict)
-            time.sleep(0.5)
+            time.sleep(0.3)
 
         finish_dict = self.create_dict('FINISH', 'FINISH')
         self.send_msg(finish_dict)

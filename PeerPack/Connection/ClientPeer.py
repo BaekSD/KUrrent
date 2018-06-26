@@ -134,7 +134,7 @@ class ClientPeer(threading.Thread):
             str_data = hex_data.decode('utf-8')
             block_dict = self.create_dict('BLOCK', str_data, send_block_list[i])
             self.send_msg(block_dict)
-            time.sleep(0.5)
+            time.sleep(0.3)
 
     def choice_block(self, send_block_list):
         send_list = []
