@@ -378,7 +378,7 @@ class PeerGUI(QMainWindow):
         sf = self.sharingFileText.text()
         tl = self.trackerListText.toPlainText()
 
-        if os.path.isfile(fn) and sf != '':
+        if sf != '':
             self.core.make_torrent(fn, sf, tl)
             self.makeDialog.destroy()
         else:

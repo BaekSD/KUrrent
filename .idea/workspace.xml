@@ -2,10 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c0c50eed-a2c5-4e58-8921-970ae8816550" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/PeerPack/Connection/PeerModule.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/PeerPack/PeerCore.py" afterPath="$PROJECT_DIR$/PeerPack/PeerCore.py" />
+      <change beforePath="$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py" afterPath="$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py" />
+      <change beforePath="$PROJECT_DIR$/PeerPack/Connection/Receiver.py" afterPath="$PROJECT_DIR$/PeerPack/Connection/Receiver.py" />
+      <change beforePath="$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py" afterPath="$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py" />
       <change beforePath="$PROJECT_DIR$/PeerPack/PeerGUI.py" afterPath="$PROJECT_DIR$/PeerPack/PeerGUI.py" />
       <change beforePath="$PROJECT_DIR$/PeerPack/__init__.py" afterPath="$PROJECT_DIR$/PeerPack/__init__.py" />
+      <change beforePath="$PROJECT_DIR$/TrackerPack/DHT_Tracker.py" afterPath="$PROJECT_DIR$/TrackerPack/DHT_Tracker.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,7 +27,7 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PeerPack/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
+            <state relative-caret-position="168">
               <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
@@ -32,43 +36,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="asyncio_test.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Desktop/asyncio_test.py">
+      <file leaf-file-name="Receiver.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PeerPack/Connection/Receiver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="672">
-              <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
-              <folding>
-                <element signature="e#0#14#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PeerCore.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="61" column="25" lean-forward="true" selection-start-line="61" selection-start-column="25" selection-end-line="61" selection-end-column="25" />
+            <state relative-caret-position="204">
+              <caret line="44" column="40" lean-forward="false" selection-start-line="44" selection-start-column="40" selection-end-line="44" selection-end-column="40" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="KurrentParser.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PeerPack/KurrentParser.py">
+      <file leaf-file-name="DHT_Tracker.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/TrackerPack/DHT_Tracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="30" column="8" lean-forward="false" selection-start-line="30" selection-start-column="8" selection-end-line="30" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PeerGUI.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/PeerPack/PeerGUI.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="380" column="43" lean-forward="true" selection-start-line="380" selection-start-column="43" selection-end-line="380" selection-end-column="43" />
+            <state relative-caret-position="199">
+              <caret line="602" column="20" lean-forward="false" selection-start-line="602" selection-start-column="20" selection-end-line="602" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -77,8 +59,8 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PeerPack/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+            <state relative-caret-position="103">
+              <caret line="7" column="20" lean-forward="false" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -86,36 +68,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BlockVO.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PeerPack/Model/BlockVO.py">
+      <file leaf-file-name="PeerGUI.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PeerPack/PeerGUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="4" column="13" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+            <state relative-caret-position="249">
+              <caret line="380" column="11" lean-forward="false" selection-start-line="380" selection-start-column="11" selection-end-line="380" selection-end-column="11" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FileManager.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PeerPack/FileManager.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="644">
-              <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Receiver.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/PeerPack/Connection/Receiver.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="672">
-              <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -123,11 +81,31 @@
       <file leaf-file-name="ClientPeer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="10" column="55" lean-forward="false" selection-start-line="10" selection-start-column="55" selection-end-line="10" selection-end-column="55" />
+            <state relative-caret-position="756">
+              <caret line="36" column="41" lean-forward="false" selection-start-line="36" selection-start-column="41" selection-end-line="36" selection-end-column="41" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PeerModule.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/PeerPack/Connection/PeerModule.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="336">
+              <caret line="66" column="59" lean-forward="false" selection-start-line="66" selection-start-column="59" selection-end-line="66" selection-end-column="59" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServerPeer.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="147">
+              <caret line="21" column="31" lean-forward="false" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="31" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -143,29 +121,11 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>197</find>
-      <find>BOOTSTRA</find>
-      <find>BOOT</find>
-      <find>get_status</find>
-      <find>boot</find>
-      <find>b</find>
-      <find>print</find>
-      <find>lock.</find>
-      <find>send_block</find>
-      <find>server`</find>
-      <find>'Qui</find>
-      <find>connect_</find>
-      <find>connect</find>
-      <find>sem.</find>
-      <find>connect_to</find>
-      <find>connect_to_dht</find>
-      <find>self.lock</find>
       <find>add_torrent</find>
       <find>bcb2fe</find>
       <find>BLOCK</find>
       <find>send</find>
       <find>sen</find>
-      <find>send_msg</find>
       <find>A`</find>
       <find>ASK</find>
       <find>get_ne</find>
@@ -173,10 +133,33 @@
       <find>add_torren</find>
       <find>add_torrent_ok</find>
       <find>make_torrent_ok</find>
+      <find>p</find>
+      <find>put_file_info</find>
+      <find>connec</find>
+      <find>get_status</find>
+      <find>create_dict</find>
+      <find>peer.</find>
+      <find>send_msg</find>
+      <find>blockvo</find>
+      <find>request_to_dht</find>
+      <find>connect_to_dht</find>
+      <find>decode_msg</find>
+      <find>get_msg</find>
+      <find>choice_block</find>
+      <find>10000</find>
+      <find>Receive</find>
+      <find>socket.AF_INET</find>
+      <find>server</find>
+      <find>pop</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -196,17 +179,19 @@
         <option value="$PROJECT_DIR$/PeerPack/DHTPeer.py" />
         <option value="$PROJECT_DIR$/PeerPack/Model/BlockVO.py" />
         <option value="$PROJECT_DIR$/PeerPack/DBManager.py" />
-        <option value="$PROJECT_DIR$/TrackerPack/DHT_Tracker.py" />
         <option value="$PROJECT_DIR$/PeerPack/test.kurrent" />
-        <option value="$PROJECT_DIR$/PeerPack/Connection/Receiver.py" />
         <option value="$PROJECT_DIR$/PeerPack/main.py" />
         <option value="$USER_HOME$/Desktop/asyncio_test.py" />
         <option value="$PROJECT_DIR$/PeerPack/FileManager.py" />
-        <option value="$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py" />
-        <option value="$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py" />
         <option value="$PROJECT_DIR$/PeerPack/__init__.py" />
         <option value="$PROJECT_DIR$/PeerPack/PeerCore.py" />
+        <option value="$PROJECT_DIR$/PeerPack/Connection/SocketPeer.py" />
+        <option value="$PROJECT_DIR$/TrackerPack/DHT_Tracker.py" />
         <option value="$PROJECT_DIR$/PeerPack/PeerGUI.py" />
+        <option value="$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py" />
+        <option value="$PROJECT_DIR$/PeerPack/Connection/Receiver.py" />
+        <option value="$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py" />
+        <option value="$PROJECT_DIR$/PeerPack/Connection/PeerModule.py" />
       </list>
     </option>
   </component>
@@ -220,10 +205,9 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="y" value="-11" />
-    <option name="width" value="1942" />
-    <option name="height" value="1040" />
+    <option name="x" value="950" />
+    <option name="width" value="980" />
+    <option name="height" value="1028" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -252,29 +236,6 @@
             <path>
               <item name="KUrrent" type="b2602c69:ProjectViewProjectNode" />
               <item name="KUrrent" type="462c0819:PsiDirectoryNode" />
-              <item name="PeerPack" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="KUrrent" type="b2602c69:ProjectViewProjectNode" />
-              <item name="KUrrent" type="462c0819:PsiDirectoryNode" />
-              <item name="PeerPack" type="462c0819:PsiDirectoryNode" />
-              <item name="Connection" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="KUrrent" type="b2602c69:ProjectViewProjectNode" />
-              <item name="KUrrent" type="462c0819:PsiDirectoryNode" />
-              <item name="PeerPack" type="462c0819:PsiDirectoryNode" />
-              <item name="Files" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="KUrrent" type="b2602c69:ProjectViewProjectNode" />
-              <item name="KUrrent" type="462c0819:PsiDirectoryNode" />
-              <item name="PeerPack" type="462c0819:PsiDirectoryNode" />
-              <item name="Model" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="KUrrent" type="b2602c69:ProjectViewProjectNode" />
-              <item name="KUrrent" type="462c0819:PsiDirectoryNode" />
               <item name="TrackerPack" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -298,14 +259,14 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Mang\PycharmProjects\KUrrent\PeerPack\Files" />
-      <recent name="C:\Users\Mang\PycharmProjects\KUrrent\PeerPack" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Mang\PycharmProjects\KUrrent\PeerPack\Connection" />
       <recent name="$PROJECT_DIR$/TrackerPack" />
       <recent name="C:\Users\Mang\PycharmProjects\KUrrent\PeerPack" />
-      <recent name="C:\Users\Mang\PycharmProjects\KUrrent\PeerPack\Connection" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Mang\PycharmProjects\KUrrent\PeerPack" />
+      <recent name="C:\Users\Mang\PycharmProjects\KUrrent\PeerPack\Files" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -510,7 +471,14 @@
       <option name="project" value="LOCAL" />
       <updated>1529952201081</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="GUI Exception and Split TrackerList in ':'">
+      <created>1529974172993</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1529974172993</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -566,22 +534,11 @@
     <MESSAGE value="add_peer function added" />
     <MESSAGE value="Send and Receive byte(block_data) and lock Fixed" />
     <MESSAGE value="File Transfer and Merge File Complete &amp; Extra Bugs Fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="File Transfer and Merge File Complete &amp; Extra Bugs Fixed" />
+    <MESSAGE value="GUI Exception and Split TrackerList in ':'" />
+    <option name="LAST_COMMIT_MESSAGE" value="GUI Exception and Split TrackerList in ':'" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PeerPack/PeerGUI.py</url>
-          <line>259</line>
-          <option name="timeStamp" value="91" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/PeerPack/PeerGUI.py</url>
-          <line>380</line>
-          <option name="timeStamp" value="95" />
-        </line-breakpoint>
-      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
@@ -592,16 +549,22 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="96" />
+      <option name="time" value="98" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="os.path.isfile(fn)" language="Python" />
+        <watch expression="self.get_msg(20000)" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
+      <expression>
+        <expression-string>self.get_msg(20000)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>os.path.isfile(fn)</expression-string>
         <language-id>Python</language-id>
@@ -647,19 +610,9 @@
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>send_block_list.pop(random.choice(send_block_list))</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/TrackerPack/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/TrackerPack/routes.py" />
-    <entry file="file://$PROJECT_DIR$/TrackerPack/main.py" />
-    <entry file="file://$PROJECT_DIR$/PeerPack/Model/User.py" />
     <entry file="file://$PROJECT_DIR$/PeerPack/Connect2Tracker.py" />
     <entry file="file://$PROJECT_DIR$/PeerPack/Peer.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2017.3/system/python_stubs/-1991415829/builtins.py" />
@@ -716,17 +669,11 @@
     <entry file="file://$PROJECT_DIR$/PeerPack/test3333.kurrent" />
     <entry file="file://$PROJECT_DIR$/PeerPack/Files/Kurrent.db" />
     <entry file="file://$PROJECT_DIR$/PeerPack/DHTPeer.py" />
-    <entry file="file://$PROJECT_DIR$/PeerPack/Model/PeerVO.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="2" column="8" lean-forward="false" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/envs/untitled/Lib/threading.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="372" column="69" lean-forward="false" selection-start-line="372" selection-start-column="69" selection-end-line="372" selection-end-column="69" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -736,13 +683,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TrackerPack/DHT_Tracker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="137" column="29" lean-forward="false" selection-start-line="137" selection-start-column="25" selection-end-line="137" selection-end-column="29" />
           <folding />
         </state>
       </provider>
@@ -751,6 +691,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="211">
           <caret line="310" column="0" lean-forward="false" selection-start-line="310" selection-start-column="0" selection-end-line="310" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -762,11 +703,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/DBManager.py">
+    <entry file="file://$USER_HOME$/Desktop/asyncio_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1708">
-          <caret line="62" column="8" lean-forward="false" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="8" />
-          <folding />
+        <state relative-caret-position="672">
+          <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#14#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/FileManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="427">
+          <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#9#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -778,60 +731,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/asyncio_test.py">
+    <entry file="file://$PROJECT_DIR$/PeerPack/Model/PeerVO.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="672">
-          <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1036">
-          <caret line="59" column="46" lean-forward="false" selection-start-line="59" selection-start-column="46" selection-end-line="59" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/FileManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="644">
-          <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/Receiver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="672">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="10" column="55" lean-forward="false" selection-start-line="10" selection-start-column="55" selection-end-line="10" selection-end-column="55" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PeerPack/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="56">
+          <caret line="2" column="8" lean-forward="false" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -843,17 +747,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/DBManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="31" column="77" lean-forward="false" selection-start-line="31" selection-start-column="76" selection-end-line="31" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/PeerCore.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="61" column="25" lean-forward="true" selection-start-line="61" selection-start-column="25" selection-end-line="61" selection-end-column="25" />
+        <state relative-caret-position="165">
+          <caret line="118" column="33" lean-forward="false" selection-start-line="118" selection-start-column="33" selection-end-line="118" selection-end-column="33" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
+        <state relative-caret-position="168">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
@@ -861,10 +773,94 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/SocketPeer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4060">
+          <caret line="148" column="34" lean-forward="false" selection-start-line="148" selection-start-column="34" selection-end-line="148" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TrackerPack/DHT_Tracker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="602" column="20" lean-forward="false" selection-start-line="602" selection-start-column="20" selection-end-line="602" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PeerPack/PeerGUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="380" column="43" lean-forward="true" selection-start-line="380" selection-start-column="43" selection-end-line="380" selection-end-column="43" />
+        <state relative-caret-position="249">
+          <caret line="380" column="11" lean-forward="false" selection-start-line="380" selection-start-column="11" selection-end-line="380" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/image.kurrent">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/thread.kurrent">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="3" column="6" lean-forward="false" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="7" column="20" lean-forward="false" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/envs/untitled/Lib/site-packages/socks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="461" column="8" lean-forward="false" selection-start-line="461" selection-start-column="8" selection-end-line="461" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ServerPeer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="21" column="31" lean-forward="false" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/Receiver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="44" column="40" lean-forward="false" selection-start-line="44" selection-start-column="40" selection-end-line="44" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/ClientPeer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="756">
+          <caret line="36" column="41" lean-forward="false" selection-start-line="36" selection-start-column="41" selection-end-line="36" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PeerPack/Connection/PeerModule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="66" column="59" lean-forward="false" selection-start-line="66" selection-start-column="59" selection-end-line="66" selection-end-column="59" />
           <folding />
         </state>
       </provider>

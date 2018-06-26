@@ -64,7 +64,7 @@ class ServerThread(threading.Thread):
         msg_dict = json.loads(msg)
         return msg_dict['HEAD'], msg_dict['BODY']
 
-    def connect_to_dht(self, request, file_hash, master_ip="192.168.43.197", master_port=15010):
+    def connect_to_dht(self, request, file_hash, master_ip="192.168.0.126", master_port=15010):
         msg = request + ',' + file_hash + ',' + str(self.ip) + ',' + str(self.port)
         try:
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
