@@ -73,10 +73,11 @@ class PeerCore:
         tll = tracker_text.splitlines()
         tracker_list = []
         size = os.path.getsize(sharing_file)
-        sha = self.getHash(sharing_file)
-        f.write(sha.hexdigest() + "\n")
+        file_hash = self.getHash(sharing_file).hexdigest()
 
-        self.KUrrentLIST[sha] = {
+        f.write(file_hash + "\n")
+
+        self.KUrrentLIST[file_hash] = {
             'file': os.path.basename(sharing_file),
             'status': 'complete',
             'dir': os.path.abspath(sharing_file),
@@ -85,7 +86,7 @@ class PeerCore:
         }
 
         for i in range(int((size + 8191) / 8192)):
-            self.KUrrentLIST[sha]['hash_table'].append(True)
+            self.KUrrentLIST[file_hash]['hash_table'].append(True)
 
         for i in tll:
             if len(i.strip()) > 0:
@@ -101,11 +102,22 @@ class PeerCore:
         f.close()
 
         # We have to do here => put client to dht and put data to database
-        block_tuples = self.get_block_tuples(sharing_file, sha.hexdigest())
+        block_tuples = self.get_block_tuples(sharing_file, file_hash)
+
         from PeerPack import db
         db.put_total_blocks(block_tuples)
-        db.put_file_info(sha.hexdigest(), size, (size / 8192) + 1, sharing_file)
-        self.server.connect_to_dht(request='add_peer', file_hash=sha.hexdigest())#, master_ip, master_port)
+        db.put_file_info(file_hash, size, (size / 8192) + 1, sharing_file)
+
+        try:
+            for tracker in tracker_list:
+                address = tracker.split(':')
+                master_ip, master_port = address[0], address[1]
+                self.server.connect_to_dht(request='add_peer', file_hash=file_hash, master_ip=master_ip, master_port=master_port)
+        except Exception as e:
+            print(e)
+        finally:
+            self.server.connect_to_dht(request='add_peer', file_hash=file_hash)
+
     def get_file_list_recur(self, abs_path, file):
         if os.path.isfile(abs_path + file):
             if os.path.basename(abs_path + file).startswith("."):
@@ -159,7 +171,15 @@ class PeerCore:
         db.put_file_info(file_hash, size, (size / 8192) + 1, file_path)
         fm.write_new_file(file_path, size)
 
-        self.server.connect_to_dht(request='get_peers', file_hash=file_hash)
+        try:
+            for tracker in tracker_list:
+                address = tracker.split(':')
+                master_ip, master_port = address[0], address[1]
+                self.server.connect_to_dht(request='get_peers', file_hash=file_hash, master_ip=master_ip, master_port=master_port)
+        except Exception as e:
+            print(e)
+        finally:
+            self.server.connect_to_dht(request='get_peers', file_hash=file_hash)
 
     def get_torrent_table(self):
         torrent_table = []

@@ -256,7 +256,7 @@ class PeerGUI(QMainWindow):
             self.savingDirText.setText(dir[0])
 
     def add_torrent_ok(self):
-        if os.path.isfile(self.addFileNameText.text()):
+        if os.path.isfile(self.addFileNameText.text()) and self.savingDirText.text() != '':
             tracker_text = self.addTrackerListText.toPlainText()#.split('\n')
             self.core.add_torrent(self.addFileNameText.text(), self.savingDirText.text(), tracker_text)
             self.addDialog.destroy()
@@ -376,10 +376,13 @@ class PeerGUI(QMainWindow):
         # make torrent file
         fn = self.fileNameText.text()
         sf = self.sharingFileText.text()
-        print(sf)
         tl = self.trackerListText.toPlainText()
-        self.core.make_torrent(fn, sf, tl)
-        self.makeDialog.destroy()
+
+        if os.path.isfile(fn) and sf != '':
+            self.core.make_torrent(fn, sf, tl)
+            self.makeDialog.destroy()
+        else:
+            QMessageBox.information(self.makeDialog, "File not found", "File not found", QMessageBox.Ok)
 
     def make_torrent_cancel(self):
         self.makeDialog.destroy()
